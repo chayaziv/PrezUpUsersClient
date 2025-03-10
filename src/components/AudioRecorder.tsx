@@ -1,4 +1,16 @@
-import React, { useState, useRef } from "react";
+
+import { useState, useRef } from "react";
+import {
+  Button,
+  Box,
+  CircularProgress,
+  Typography,
+  Paper,
+  Stack,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
+import { Mic, Stop, Download, Save } from "@mui/icons-material";
 
 const AudioRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -39,7 +51,7 @@ const AudioRecorder: React.FC = () => {
       setIsRecording(false);
     }
   };
-  // http://localhost:5015/api/presentation
+
   const saveAudio = async (): Promise<void> => {
     if (audioBlob) {
       const formData = new FormData();
@@ -79,47 +91,96 @@ const AudioRecorder: React.FC = () => {
   };
 
   return (
-    <div>
-      <button onClick={startRecording} disabled={isRecording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!isRecording}>
-        Stop Recording
-      </button>
-      <button onClick={saveAudio} disabled={!audioBlob}>
-        Save Audio
-      </button>
-      <button onClick={downloadAudio} disabled={!audioBlob}>
-        Download Audio
-      </button>
-      {audioURL && <audio controls src={audioURL} />}
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f7f7f7",
+        padding: 3,
+      }}
+    >
+      <Paper
+        sx={{
+          padding: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+          width: "100%",
+          maxWidth: 400,
+        }}
+      >
+        <Typography variant="h5" sx={{ textAlign: "center", marginBottom: 3 }}>
+          Audio Recorder
+        </Typography>
+
+        <Stack direction="column" spacing={2} alignItems="center">
+          <Box>{audioURL && <audio controls src={audioURL as string} />}</Box>
+
+          <Stack direction="row" spacing={2} justifyContent="center">
+            {!isRecording ? (
+              <Tooltip title="Start Recording">
+                <IconButton
+                  color="primary"
+                  onClick={startRecording}
+                  size="large"
+                  sx={{ backgroundColor: "#1976d2", color: "white" }}
+                >
+                  <Mic fontSize="large" />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Stop Recording">
+                <IconButton
+                  color="error"
+                  onClick={stopRecording}
+                  size="large"
+                  sx={{ backgroundColor: "#d32f2f", color: "white" }}
+                >
+                  <Stop fontSize="large" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Stack>
+
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            sx={{ marginTop: 2 }}
+          >
+            <Button
+              variant="contained"
+              color="success"
+              onClick={saveAudio}
+              disabled={!audioBlob}
+              startIcon={<Save />}
+            >
+              Save Audio
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={downloadAudio}
+              disabled={!audioBlob}
+              startIcon={<Download />}
+            >
+              Download
+            </Button>
+          </Stack>
+
+          {isRecording && (
+            <Box
+              sx={{ display: "flex", justifyContent: "center", marginTop: 3 }}
+            >
+              <CircularProgress />
+            </Box>
+          )}
+        </Stack>
+      </Paper>
+    </Box>
   );
 };
 
 export default AudioRecorder;
-
-// try {
-//   const response = await fetch("http://localhost:5000//analyze-audio", {
-//     // עדכון הנתיב לנתיב ה־Flask שלך
-//     method: "POST",
-//     body: formData,
-//   });
-
-//   if (response.ok) {
-//     const data = await response.text();
-//     console.log("data", data);
-//     let res = data
-//       .replace("```json", "")
-//       .replace("```", "")
-//       .trim(); // הסרת רווחים מיותרים
-//     res = res.replace(/\n/g, ""); //הסרת מעברי שורה
-//     const res3 = JSON.parse(res);
-//     console.log("res3", res3.scores);
-//     console.log("res3", res3.tips);
-//   } else {
-//     console.error("Error during analysis:", response);
-//   }
-// } catch (error) {
-//   console.error("Error saving file:", error);
-// }

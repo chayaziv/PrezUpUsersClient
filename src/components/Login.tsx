@@ -1,44 +1,53 @@
-
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import { InputAdornment, IconButton } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Visibility,
+  VisibilityOff,
+  Person as PersonIcon,
+} from "@mui/icons-material";
 
-export default function Login() {
-  const [userEmail, setuserEmail] = useState("admin");
-  const [password, setPassword] = useState("123456");
-  const [showPassword, setShowPassword] = useState(false);
-
+const Login = () => {
+  const [userEmail, setUserEmail] = useState<string>("admin");
+  const [password, setPassword] = useState<string>("123456");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     try {
-      fetch("http://localhost:5015/api/auth/login", {
+      const response = await fetch("http://localhost:5015/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: userEmail,
-          password: password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, password }),
       });
+
+      if (!response.ok) {
+        console.log("Login failed:");
+      } else {
+        console.log("Login success:");
+      }
+      const data = await response.json();
+      console.log(data);
+      // ניהול נתונים לאחר התחברות (שמירת טוקן וכו')
     } catch (error) {
       alert(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,13 +72,12 @@ export default function Login() {
               required
               fullWidth
               id="userEmail"
-              label="userEmail"
+              label="Email"
               name="userEmail"
-              autoComplete="userEmail"
+              autoComplete="email"
               autoFocus
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setuserEmail(event.target.value)
-              }
+              value={userEmail}
+              onChange={(event) => setUserEmail(event.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -87,9 +95,8 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(event.target.value)
-              }
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -109,7 +116,7 @@ export default function Login() {
               }}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox color="primary" />}
               label="Remember me"
             />
             <Button
@@ -117,14 +124,15 @@ export default function Login() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
             <Grid container justifyContent="space-between">
               <Grid item>
-                <Link href="/register" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <Button href="/register" size="small">
+                  Don't have an account? Sign Up
+                </Button>
               </Grid>
             </Grid>
           </Box>
@@ -132,4 +140,6 @@ export default function Login() {
       </Paper>
     </Container>
   );
-}
+};
+
+export default Login;

@@ -1,44 +1,52 @@
-
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import { InputAdornment, IconButton } from "@mui/material";
-import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import {
+  Visibility,
+  VisibilityOff,
+  Person as PersonIcon,
+} from "@mui/icons-material";
 
-export default function Register() {
-  const [userEmail, setuserEmail] = useState("user");
-  const [password, setPassword] = useState("123456");
-  const [userName, setUserName] = useState("user");
-  const [showPassword, setShowPassword] = useState(false);
+const Register = () => {
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLoading(true);
     try {
-      fetch("http://localhost:5015/api/auth/register", {
+      const response = await fetch("http://localhost:5015/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userName: userName,
-          email: userEmail,
-          password: password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userName, email: userEmail, password }),
       });
+
+      if (!response.ok) {
+        console.log("Registration failed:");
+      } else {
+        console.log("Registration success:");
+      }
+      const data = await response.json();
+      console.log(data);
+      // ניהול נתונים לאחר הרשמה (כמו הפניית המשתמש למסך התחברות או שמירת טוקן)
     } catch (error) {
       alert(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,13 +71,11 @@ export default function Register() {
               required
               fullWidth
               id="userName"
-              label="User Name"
+              label="Full Name"
               name="userName"
-              autoComplete="userName"
               autoFocus
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setUserName(event.target.value)
-              }
+              value={userName}
+              onChange={(event) => setUserName(event.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -83,12 +89,11 @@ export default function Register() {
               required
               fullWidth
               id="userEmail"
-              label="User Email"
+              label="Email"
               name="userEmail"
-              autoComplete="userEmail"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setuserEmail(event.target.value)
-              }
+              autoComplete="email"
+              value={userEmail}
+              onChange={(event) => setUserEmail(event.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -106,9 +111,8 @@ export default function Register() {
               type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="new-password"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setPassword(event.target.value)
-              }
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -127,23 +131,20 @@ export default function Register() {
                 ),
               }}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
-              Sign Up
+              {loading ? "Registering..." : "Sign Up"}
             </Button>
             <Grid container justifyContent="space-between">
               <Grid item>
-                <Link href="/login" variant="body2">
-                  {"Already have an account? Sign In"}
-                </Link>
+                <Button href="/login" size="small">
+                  Already have an account? Sign In
+                </Button>
               </Grid>
             </Grid>
           </Box>
@@ -151,4 +152,6 @@ export default function Register() {
       </Paper>
     </Container>
   );
-}
+};
+
+export default Register;

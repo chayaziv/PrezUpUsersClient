@@ -1,0 +1,323 @@
+
+import { RouterProvider } from 'react-router'
+import './App.css'
+import { router } from './Router'
+
+
+function App() {
+
+
+  return (  
+      <>
+       <RouterProvider router={router} />;
+      </>
+  )
+}
+
+export default App
+
+import  { useState, useRef } from "react";
+
+const AudioRecorder: React.FC = () => {
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
+  const startRecording = async (): Promise<void> => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, {
+          type: "audio/wav",
+        });
+        setAudioBlob(audioBlob);
+        setAudioURL(URL.createObjectURL(audioBlob));
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (error) {
+      console.error("Error starting recording:", error);
+    }
+  };
+
+  const stopRecording = (): void => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+  // http://localhost:5015/api/presentation
+  const saveAudio = async (): Promise<void> => {
+    if (audioBlob) {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "recording.wav");
+      try {
+        const response = await fetch(
+          "http://localhost:5015/api/Presentation/analyze-audio",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Failed to analyze audio");
+        }
+
+        console.log("Success:", result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
+
+  const downloadAudio = (): void => {
+    if (audioBlob) {
+      const url = URL.createObjectURL(audioBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "recording.wav";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={startRecording} disabled={isRecording}>
+        Start Recording
+      </button>
+      <button onClick={stopRecording} disabled={!isRecording}>
+        Stop Recording
+      </button>
+      <button onClick={saveAudio} disabled={!audioBlob}>
+        Save Audio
+      </button>
+      <button onClick={downloadAudio} disabled={!audioBlob}>
+        Download Audio
+      </button>
+      {audioURL && <audio controls src={audioURL} />}
+    </div>
+  );
+};
+
+export default AudioRecorder;
+
+// try {
+//   const response = await fetch("http://localhost:5000//analyze-audio", {
+//     // עדכון הנתיב לנתיב ה־Flask שלך
+//     method: "POST",
+//     body: formData,
+//   });
+
+//   if (response.ok) {
+//     const data = await response.text();
+//     console.log("data", data);
+//     let res = data
+//       .replace("```json", "")
+//       .replace("```", "")
+//       .trim(); // הסרת רווחים מיותרים
+//     res = res.replace(/\n/g, ""); //הסרת מעברי שורה
+//     const res3 = JSON.parse(res);
+//     console.log("res3", res3.scores);
+//     console.log("res3", res3.tips);
+//   } else {
+//     console.error("Error during analysis:", response);
+//   }
+// } catch (error) {
+//   console.error("Error saving file:", error);
+// }
+
+import { Link } from "react-router";
+
+const Home = () => {
+  return (
+    <>
+      <div>Home</div>
+      <Link to="/record">Record</Link>
+      <Link to="/signIn">Sign In</Link>
+      <Link to="/signUp">Sign Up</Link>
+    </>
+  );
+};
+
+export default Home;
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+import { createBrowserRouter } from "react-router";
+import Home from "./pages/Home";
+import AudioRecorder from "./components/AudioRecorder";
+import SignIn from "./components/SignIn";
+
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "record",
+    element: <AudioRecorder />,
+  },
+  
+  {
+    path: "signIn",
+    element: <SignIn />,
+  }
+]);
+
+import { useState } from "react";
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Container,
+  FormControlLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+  Box,
+} from "@mui/material";
+import { Visibility, VisibilityOff, Lock as LockIcon, Person as PersonIcon } from "@mui/icons-material";
+
+export default function SignIn() {
+  const [userEmail, setUserEmail] = useState<string>("admin");
+  const [password, setPassword] = useState<string>("123456");
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("http://localhost:5015/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed. Please check your credentials.");
+      }
+
+      const data = await response.json();
+      console.log("Login success:", data);
+      // ניהול נתונים לאחר התחברות (שמירת טוקן וכו')
+    } catch (error) {
+      alert(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container component="main" maxWidth="xs">
+      <Paper elevation={6} sx={{ padding: 4, mt: 8, borderRadius: 2 }}>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+            <LockIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign In
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="userEmail"
+              label="Email"
+              name="userEmail"
+              autoComplete="email"
+              autoFocus
+              value={userEmail}
+              onChange={(event) => setUserEmail(event.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type={showPassword ? "text" : "password"}
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <LockIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <FormControlLabel control={<Checkbox color="primary" />} label="Remember me" />
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} disabled={loading}>
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+            <Grid container justifyContent="space-between">
+              <Grid item>
+                <Button href="/register" size="small">
+                  Don't have an account? Sign Up
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
+  );
+}
+
+/// <reference types="vite/client" />
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
