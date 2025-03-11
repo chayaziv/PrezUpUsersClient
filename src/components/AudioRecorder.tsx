@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import {
   Button,
@@ -61,6 +60,9 @@ const AudioRecorder: React.FC = () => {
           "http://localhost:5015/api/Presentation/analyze-audio",
           {
             method: "POST",
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIwMDgiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiY0BnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJjQGdtYWlsLmNvbSIsImV4cCI6MTc0MTcwODM4MCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDE1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDE1In0.iqu-LGWM1QmHupGfesSg417ch--umHfMSxfXkRms7ww`,
+            },
             body: formData,
           }
         );

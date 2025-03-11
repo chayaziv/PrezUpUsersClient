@@ -1,28 +1,20 @@
 import { Outlet } from "react-router-dom";
 import NavBar from "./NavBar";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { Box, AppBar, Toolbar } from "@mui/material";
 
 const AppLayout = () => {
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <NavBar />
-          </Toolbar>
-        </AppBar>
+      <AppBar position="sticky" sx={{ width: "100%" }}>
+        <Toolbar sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
+          <NavBar />
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ paddingTop: "64px" }}> {/* הרווח מתחת לתפריט */}
+        <Outlet />
       </Box>
-      <Outlet />
     </>
   );
 };
 
 export default AppLayout;
-{
-}
