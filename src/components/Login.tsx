@@ -19,35 +19,20 @@ import {
   VisibilityOff,
   Person as PersonIcon,
 } from "@mui/icons-material";
+import useAuth from "../hooks/useAuth"; // הייבוא של ה-Hook
 
 const Login = () => {
   const [userEmail, setUserEmail] = useState<string>("admin");
   const [password, setPassword] = useState<string>("123456");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const { handleLogin, loading, error } = useAuth(); // שימוש ב-Hook לניהול התחברות
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:5015/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: userEmail, password }),
-      });
-
-      if (!response.ok) {
-        console.log("Login failed:");
-      } else {
-        console.log("Login success:");
-      }
-      const data = await response.json();
-      console.log(data);
-      // ניהול נתונים לאחר התחברות (שמירת טוקן וכו')
-    } catch (error) {
-      alert(error);
-    } finally {
-      setLoading(false);
+    const { success } = await handleLogin(userEmail, password);
+    if (success) {
+      // אם ההתחברות הצליחה, אפשר להמשיך למקום הבא או להפעיל פעולה כלשהי
     }
   };
 
@@ -136,6 +121,8 @@ const Login = () => {
               </Grid>
             </Grid>
           </Box>
+          {error && <div style={{ color: "red" }}>{error}</div>}{" "}
+          {/* הצגת שגיאות */}
         </Box>
       </Paper>
     </Container>
