@@ -174,6 +174,7 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import useAuth from "../hooks/useAuth"; // הייבוא של ה-Hook
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [userName, setUserName] = useState<string>("");
@@ -283,7 +284,7 @@ const Register = () => {
             </Button>
             <Grid container justifyContent="space-between">
               <Grid item>
-                <Button href="/login" size="small">
+                <Button component={Link} to="/login" size="small">
                   Already have an account? Sign In
                 </Button>
               </Grid>

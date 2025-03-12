@@ -20,6 +20,7 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import useAuth from "../hooks/useAuth"; // הייבוא של ה-Hook
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [userEmail, setUserEmail] = useState<string>("admin");
@@ -32,7 +33,7 @@ const Login = () => {
     event.preventDefault();
     const { success } = await handleLogin(userEmail, password);
     if (success) {
-      // אם ההתחברות הצליחה, אפשר להמשיך למקום הבא או להפעיל פעולה כלשהי
+      // אם התחברות הצליחה, אפשר להמשיך למקום הבא
     }
   };
 
@@ -61,7 +62,7 @@ const Login = () => {
               name="userEmail"
               autoComplete="email"
               autoFocus
-              value={userEmail}
+            
               onChange={(event) => setUserEmail(event.target.value)}
               InputProps={{
                 startAdornment: (
@@ -80,7 +81,7 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               id="password"
               autoComplete="current-password"
-              value={password}
+              // value={password}
               onChange={(event) => setPassword(event.target.value)}
               InputProps={{
                 startAdornment: (
@@ -115,7 +116,7 @@ const Login = () => {
             </Button>
             <Grid container justifyContent="space-between">
               <Grid item>
-                <Button href="/register" size="small">
+                <Button  component={Link} to="/register" size="small">
                   Don't have an account? Sign Up
                 </Button>
               </Grid>

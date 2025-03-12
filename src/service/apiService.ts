@@ -1,20 +1,27 @@
-// apiService.ts
-import API from "../axiosInstance"; // הייבוא של ה-axiosInstance
+import API from "../axiosInstance";
 
 export const loginUser = async (email: string, password: string) => {
   try {
     const response = await API.post("/auth/login", { email, password });
-    return response.data; // מחזיר את התשובה מהשרת
+    return response.data;
   } catch (error) {
-    throw error; // אם יש שגיאה, זורק אותה
+    throw error;
   }
 };
 
-export const registerUser = async (userName: string, email: string, password: string) => {
+export const registerUser = async (
+  userName: string,
+  email: string,
+  password: string
+) => {
   try {
-    const response = await API.post("/auth/register", { userName, email, password });
-    return response.data; // מחזיר את התשובה מהשרת
+    const response = await API.post("/auth/register", {
+      userName,
+      email,
+      password,
+    });
+    return response.data;
   } catch (error) {
-    throw error; // אם יש שגיאה, זורק אותה
+    throw error;
   }
 };
