@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import About from "./pages/About";
 import AppLayout from "./components/AppLayout";
 import Register from "./components/Register";
+import MyPresentations from "./components/MyPresentations";
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
         path: "register",
         element: <Register />,
       },
+      {
+        path: "my-presentations",
+        element: <MyPresentations />,
+      }
     ],
   },
 ]);
