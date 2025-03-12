@@ -7,6 +7,8 @@ import About from "./pages/About";
 import AppLayout from "./components/AppLayout";
 import Register from "./components/Register";
 import MyPresentations from "./components/MyPresentations";
+import PublicPresentations from "./components/PublicPresentation";
+import PresentationComparison from "./components/PresentationComparison";
 
 export const router = createBrowserRouter([
   {
@@ -37,7 +39,15 @@ export const router = createBrowserRouter([
       {
         path: "my-presentations",
         element: <MyPresentations />,
-      }
+      },
+      {
+        path: "public-presentations",
+        element: <PublicPresentations />,
+      },
+      {
+        path: "compare",
+        element: <PresentationComparison />,
+      },
     ],
   },
 ]);
