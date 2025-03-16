@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import API from "../axiosInstance";  // ייבוא axiosInstance
+import API from "../axiosInstance";  
 import { PresentationType } from "../types/presentation";
 
 export const fetchMyPresentations = createAsyncThunk(
   "myPresentations/fetch",
   async (_, thunkAPI) => {
     try {
-      const response = await API.get("/users/my-presentations");  // שימוש ב-axiosInstance
+      const response = await API.get("/users/my-presentations"); 
       return response.data as PresentationType[];
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
@@ -14,13 +14,12 @@ export const fetchMyPresentations = createAsyncThunk(
   }
 );
 
-// פעולה אסינכרונית למחיקת פרזנטציה
 export const deletePresentation = createAsyncThunk(
   "myPresentations/delete",
   async (presentationId: number, thunkAPI) => {
     try {
-      await API.delete(`/presentation/${presentationId}`);  // שימוש ב-axiosInstance
-      return presentationId; // מחזירים את ה-ID שנמחק
+      await API.delete(`/presentation/${presentationId}`);  
+      return presentationId; 
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
     }

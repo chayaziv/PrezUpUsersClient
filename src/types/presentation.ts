@@ -1,17 +1,33 @@
 export interface PresentationType {
-    id: number;
-    fileUrl: string;
-    clarity: number;
-    clarityFeedback: string;
-    fluency: number;
-    fluencyFeedback: string;
-    confidence: number;
-    confidenceFeedback: string;
-    engagement: number;
-    engagementFeedback: string;
-    speechStyle: number;
-    speechStyleFeedback: string;
-    score: number;
-    tips: string;
-  }
-  
+  id: number;
+  fileUrl: string;
+  clarity: number;
+  clarityFeedback: string;
+  fluency: number;
+  fluencyFeedback: string;
+  confidence: number;
+  confidenceFeedback: string;
+  engagement: number;
+  engagementFeedback: string;
+  speechStyle: number;
+  speechStyleFeedback: string;
+  score: number;
+  tips: string;
+}
+
+export const initialPresentationState: PresentationType = {
+  id: 0,
+  fileUrl: "",
+  clarity: 0,
+  clarityFeedback: "",
+  fluency: 0,
+  fluencyFeedback: "",
+  confidence: 0,
+  confidenceFeedback: "",
+  engagement: 0,
+  engagementFeedback: "",
+  speechStyle: 0,
+  speechStyleFeedback: "",
+  score: 0,
+  tips: "",
+};
