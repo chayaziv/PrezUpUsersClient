@@ -1,4 +1,26 @@
-import { Card, CardContent, Typography, Box, Divider, Button } from "@mui/material";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Divider,
+  Button,
+  IconButton,
+  Collapse,
+  useTheme,
+  Paper,
+} from "@mui/material";
+import {
+  ExpandMore as ExpandMoreIcon,
+  Visibility as VisibilityIcon,
+  Star as StarIcon,
+  Speaker as SpeakerIcon,
+  RecordVoiceOver as RecordVoiceOverIcon,
+  ThumbUp as ThumbUpIcon,
+  Forum as ForumIcon,
+  Style as StyleIcon,
+} from "@mui/icons-material";
 import { PresentationType } from "../types/presentation";
 
 interface PresentationCardProps {
@@ -6,48 +28,67 @@ interface PresentationCardProps {
 }
 
 const PresentationCard: React.FC<PresentationCardProps> = ({ presentation }) => {
+  const [openFeedback, setOpenFeedback] = useState<{ [key: string]: boolean }>({});
+  const theme = useTheme();
+
+  const toggleFeedback = (key: string) => {
+    setOpenFeedback((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const criteria = [
+    { key: "clarity", label: "Clarity", icon: <SpeakerIcon /> },
+    { key: "fluency", label: "Fluency", icon: <RecordVoiceOverIcon /> },
+    { key: "confidence", label: "Confidence", icon: <ThumbUpIcon /> },
+    { key: "engagement", label: "Engagement", icon: <ForumIcon /> },
+    { key: "speechStyle", label: "Speech Style", icon: <StyleIcon /> },
+  ];
+
   return (
-    <Card sx={{ maxWidth: 345, marginBottom: 2, boxShadow: 3 }}>
+    <Card sx={{ width: "100%", marginBottom: 3, boxShadow: 3, borderRadius: 2, backgroundColor: theme.palette.background.paper }}>
       <CardContent>
-        <Typography variant="h6" gutterBottom>
-          Presentation #{presentation.title}
+        <Typography variant="h6" gutterBottom textAlign="center" color={theme.palette.primary.main}>
+          <StarIcon sx={{ verticalAlign: "middle" }} /> {presentation.title}
         </Typography>
 
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography variant="body2" color="text.secondary">
+        <Divider sx={{ marginY: 2 }} />
+
+        <Box sx={{ textAlign: "center", mb: 2 }}>
+          <Typography variant="h5" color={theme.palette.secondary.main}>
             <strong>Score:</strong> {presentation.score} / 10
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Clarity:</strong> {presentation.clarity} / 10
-            <br />
-            <strong>Fluency:</strong> {presentation.fluency} / 10
-            <br />
-            <strong>Confidence:</strong> {presentation.confidence} / 10
-            <br />
-            <strong>Engagement:</strong> {presentation.engagement} / 10
-            <br />
-            <strong>Speech Style:</strong> {presentation.speechStyle} / 10
           </Typography>
         </Box>
 
-        <Divider sx={{ marginBottom: 2 }} />
+        {criteria.map(({ key, label, icon }) => (
+          <Box key={key} sx={{ marginBottom: 1 }}>
+            <Paper sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: 2, borderRadius: 2, backgroundColor: theme.palette.action.hover }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                {icon}
+                <Typography variant="body1" sx={{ marginLeft: 1 }}>
+                  <strong>{label}:</strong> {presentation[key as keyof PresentationType]} / 10
+                </Typography>
+              </Box>
+              <IconButton
+                onClick={() => toggleFeedback(key)}
+                sx={{ transform: openFeedback[key] ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.3s" }}
+              >
+                <ExpandMoreIcon color="primary" />
+              </IconButton>
+            </Paper>
+            <Collapse in={openFeedback[key]}>
+              <Box sx={{ padding: 2, backgroundColor: theme.palette.background.default, borderRadius: 2, marginTop: 1 }}>
+                <Typography variant="body2" color={theme.palette.text.secondary}>
+                  {presentation[`${key}Feedback` as keyof PresentationType]}
+                </Typography>
+              </Box>
+            </Collapse>
+          </Box>
+        ))}
 
-        <Typography variant="body2" color="text.primary">
-          <strong>Feedback:</strong>
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          <strong>Clarity:</strong> {presentation.clarityFeedback}
-          <br />
-          <strong>Fluency:</strong> {presentation.fluencyFeedback}
-          <br />
-          <strong>Confidence:</strong> {presentation.confidenceFeedback}
-          <br />
-          <strong>Engagement:</strong> {presentation.engagementFeedback}
-          <br />
-          <strong>Speech Style:</strong> {presentation.speechStyleFeedback}
-        </Typography>
+        <Divider sx={{ marginY: 2 }} />
 
-        <Divider sx={{ marginTop: 2 }} />
+        <Typography variant="body2" textAlign="center" fontStyle="italic" color={theme.palette.text.secondary}>
+          "{presentation.tips}"
+        </Typography>
 
         <Box sx={{ marginTop: 2, textAlign: "center" }}>
           <Button
@@ -55,7 +96,8 @@ const PresentationCard: React.FC<PresentationCardProps> = ({ presentation }) => 
             color="primary"
             href={presentation.fileUrl}
             target="_blank"
-            sx={{ padding: "8px 16px" }}
+            sx={{ padding: "8px 16px", borderRadius: 3 }}
+            startIcon={<VisibilityIcon />}
           >
             View Presentation
           </Button>
