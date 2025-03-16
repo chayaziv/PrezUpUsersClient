@@ -61,7 +61,6 @@ const AudioRecorder: React.FC = () => {
     if (audioBlob) {
       const formData = new FormData();
       formData.append("audio", audioBlob, "recording.wav");
-      formData.append("isPublic", "true");
       dispatch(addPresentation(formData));
     }
   };

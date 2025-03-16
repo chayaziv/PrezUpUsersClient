@@ -9,6 +9,7 @@ import Register from "./components/Register";
 import MyPresentations from "./components/MyPresentations";
 import PublicPresentations from "./components/PublicPresentation";
 import PresentationComparison from "./components/PresentationComparison";
+import AddRecording from "./components/AddRecording";
 
 export const router = createBrowserRouter([
   {
@@ -25,7 +26,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "record",
-        element: <AudioRecorder />,
+        element: <AddRecording />,
       },
 
       {
