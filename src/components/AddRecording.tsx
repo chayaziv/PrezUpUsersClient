@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Paper, Stepper, Step, StepLabel, Button } from "@mui/material";
+import { Box, Paper, Stepper, Step, StepLabel } from "@mui/material";
 import Step1Details from "./Step1Details";
 import Step2Recorder from "./Step2Recorder";
 import Step3Submit from "./Step3Submit";
