@@ -4,7 +4,7 @@ import { initialUserState, UserType } from "../types/user";
 const currentUserSlice = createSlice({
   name: "currentUser",
   initialState: {
-    user: initialUserState,
+    user: initialUserState as UserType,
     isLoggedIn: false,
   },
   reducers: {

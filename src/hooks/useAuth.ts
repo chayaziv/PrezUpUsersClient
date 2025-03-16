@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { loginUser, registerUser } from "../service/apiService";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/currentUserSlice";

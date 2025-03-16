@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Card, CardContent, Typography, Grid } from "@mui/material";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 import { PresentationType } from "../types/presentation";
-import { FaChartBar, FaChartLine } from "react-icons/fa";
+import {  FaChartLine } from "react-icons/fa";
 
 const PresentationComparison: React.FC = () => {
   const myPresentations = useSelector((state: any) => state.myPresentations.list);

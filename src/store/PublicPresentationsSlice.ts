@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { PresentationType } from "../types/presentation";
 import API from "../axiosInstance";
 

@@ -1,11 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { UserType } from "../types/user";
-import { useEffect } from "react";
-import { AppDispatch } from "../store/store";
+
+// import { AppDispatch } from "../store/store";
 
 const Home = () => {
   
-  const dispatch = useDispatch<AppDispatch>(); // יצירת dispatch
+  // const dispatch = useDispatch<AppDispatch>(); // יצירת dispatch
   const user = useSelector(
     (state: { currentUser: { user: UserType } }) => state.currentUser.user
   ); // גישה לנתוני המשתמש
