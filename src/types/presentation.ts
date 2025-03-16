@@ -1,5 +1,6 @@
 export interface PresentationType {
   id: number;
+  title: string;
   fileUrl: string;
   clarity: number;
   clarityFeedback: string;
@@ -17,6 +18,7 @@ export interface PresentationType {
 
 export const initialPresentationState: PresentationType = {
   id: 0,
+  title: "",
   fileUrl: "",
   clarity: 0,
   clarityFeedback: "",

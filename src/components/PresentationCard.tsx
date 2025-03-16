@@ -10,7 +10,7 @@ const PresentationCard: React.FC<PresentationCardProps> = ({ presentation }) => 
     <Card sx={{ maxWidth: 345, marginBottom: 2, boxShadow: 3 }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Presentation #{presentation.id}
+          Presentation #{presentation.title}
         </Typography>
 
         <Box sx={{ marginBottom: 2 }}>
