@@ -1,15 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { PresentationType } from "../types/presentation";
+import API from "../axiosInstance";
 
 export const fetchPublicPresentations = createAsyncThunk(
   "publicPresentations/fetch",
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        "http://localhost:5015/api/presentation/public"
-      );
-      return response.data as PresentationType[];
+      const response = await API.get("/presentation/public");
+      return response.data.data as PresentationType[]; // גישה לשדה "data"
     } catch (e: any) {
       return thunkAPI.rejectWithValue(e.message);
     }

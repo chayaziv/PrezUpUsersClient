@@ -1,4 +1,7 @@
+
 import { useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   Button,
   Box,
@@ -10,6 +13,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Mic, Stop, Download, Save } from "@mui/icons-material";
+import { addPresentation } from "../store/myPresentations";
+import { AppDispatch } from "../store/store";
 
 const AudioRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -17,6 +22,8 @@ const AudioRecorder: React.FC = () => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading } = useSelector((state: any) => state.myPresentations);
 
   const startRecording = async (): Promise<void> => {
     try {
@@ -51,32 +58,11 @@ const AudioRecorder: React.FC = () => {
     }
   };
 
-  const saveAudio = async (): Promise<void> => {
+  const saveAudio = (): void => {
     if (audioBlob) {
       const formData = new FormData();
       formData.append("audio", audioBlob, "recording.wav");
-      try {
-        const response = await fetch(
-          "http://localhost:5015/api/Presentation/analyze-audio",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjIwMDgiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiY0BnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJjQGdtYWlsLmNvbSIsImV4cCI6MTc0MTcwODM4MCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDE1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo1MDE1In0.iqu-LGWM1QmHupGfesSg417ch--umHfMSxfXkRms7ww`,
-            },
-            body: formData,
-          }
-        );
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.error || "Failed to analyze audio");
-        }
-
-        console.log("Success:", result);
-      } catch (error) {
-        console.error("Error:", error);
-      }
+      dispatch(addPresentation(formData));
     }
   };
 
@@ -156,10 +142,10 @@ const AudioRecorder: React.FC = () => {
               variant="contained"
               color="success"
               onClick={saveAudio}
-              disabled={!audioBlob}
+              disabled={!audioBlob || loading}
               startIcon={<Save />}
             >
-              Save Audio
+              {loading ? "Saving..." : "Save Audio"}
             </Button>
             <Button
               variant="outlined"

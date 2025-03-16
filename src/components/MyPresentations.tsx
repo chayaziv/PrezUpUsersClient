@@ -27,6 +27,8 @@ const MyPresentations = () => {
       <h2>My Presentations</h2>
       {loading ? (
         <p>Loading...</p>
+      ) : presentations.length === 0 ? (
+        <p>No presentations found.</p> // הודעה למשתמש במקרה שאין נתונים
       ) : (
         presentations.map((presentation) => (
           <PresentationCard key={presentation.id} presentation={presentation} />
