@@ -8,8 +8,8 @@ import Register from "./components/Register";
 import MyPresentations from "./components/MyPresentations";
 import PublicPresentations from "./components/PublicPresentation";
 import PresentationComparison from "./components/PresentationComparison";
-import AddRecording from "./components/AddRecording";
-import PresentationDetails from "./components/PresentationDetails";
+import AddRecording from "./components/record/AddRecording";
+import PresentationDetails from "./components/presentation/PresentationDetails";
 
 export const router = createBrowserRouter([
   {

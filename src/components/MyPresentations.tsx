@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { PresentationType } from "../types/presentation";
 
-import PresentationCard from "./PresentationDetails";
+import PresentationCard from "./presentation/PresentationDetails";
 import { fetchMyPresentations } from "../store/myPresentations";
 import { AppDispatch } from "../store/store";
 
@@ -31,7 +31,7 @@ const MyPresentations = () => {
         <p>No presentations found.</p> // הודעה למשתמש במקרה שאין נתונים
       ) : (
         presentations.map((presentation) => (
-          <PresentationCard key={presentation.id} presentation={presentation} />
+          <PresentationCard key={presentation.id} />
         ))
       )}
     </div>

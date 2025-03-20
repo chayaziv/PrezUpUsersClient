@@ -1,6 +1,18 @@
 import { useState } from "react";
-import { Box, Paper, Stepper, Step, StepLabel, Typography, Divider } from "@mui/material";
-import { MdOutlineDescription, MdOutlineMic, MdOutlineCloudUpload } from "react-icons/md";
+import {
+  Box,
+  Paper,
+  Stepper,
+  Step,
+  StepLabel,
+  Typography,
+  Divider,
+} from "@mui/material";
+import {
+  MdOutlineDescription,
+  MdOutlineMic,
+  MdOutlineCloudUpload,
+} from "react-icons/md";
 import Step1Details from "./Step1Details";
 import Step2Recorder from "./Step2Recorder";
 import Step3Submit from "./Step3Submit";
@@ -23,7 +35,14 @@ const AddRecording: React.FC = () => {
   const prevStep = () => setActiveStep((prev) => prev - 1);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 5 }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        mt: 5,
+      }}
+    >
       <Paper
         sx={{
           padding: 4,
@@ -44,9 +63,22 @@ const AddRecording: React.FC = () => {
 
         <Divider sx={{ my: 3 }} />
 
-        {activeStep === 0 && <Step1Details nextStep={nextStep} setRecordingData={setRecordingData} />}
-        {activeStep === 1 && <Step2Recorder nextStep={nextStep} prevStep={prevStep} setRecordingData={setRecordingData} />}
-        {activeStep === 2 && <Step3Submit prevStep={prevStep} recordingData={recordingData} />}
+        {activeStep === 0 && (
+          <Step1Details
+            nextStep={nextStep}
+            setRecordingData={setRecordingData}
+          />
+        )}
+        {activeStep === 1 && (
+          <Step2Recorder
+            nextStep={nextStep}
+            prevStep={prevStep}
+            setRecordingData={setRecordingData}
+          />
+        )}
+        {activeStep === 2 && (
+          <Step3Submit prevStep={prevStep} recordingData={recordingData} />
+        )}
       </Paper>
     </Box>
   );

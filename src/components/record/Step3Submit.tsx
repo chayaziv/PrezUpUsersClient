@@ -48,8 +48,8 @@
 // export default Step3Submit;
 import { Box, Button, CircularProgress, Alert } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../store/store";
-import { addPresentation } from "../store/myPresentations";
+import { AppDispatch, RootState } from "../../store/store";
+import { addPresentation } from "../../store/myPresentations";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
