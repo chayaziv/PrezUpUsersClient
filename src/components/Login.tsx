@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -20,20 +21,20 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import useAuth from "../hooks/useAuth"; // הייבוא של ה-Hook
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [userEmail, setUserEmail] = useState<string>("admin");
   const [password, setPassword] = useState<string>("123456");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const { handleLogin, loading, error } = useAuth(); // שימוש ב-Hook לניהול התחברות
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const { success } = await handleLogin(userEmail, password);
     if (success) {
-      // אם התחברות הצליחה, אפשר להמשיך למקום הבא
+      navigate("/home");
     }
   };
 
@@ -62,7 +63,6 @@ const Login = () => {
               name="userEmail"
               autoComplete="email"
               autoFocus
-            
               onChange={(event) => setUserEmail(event.target.value)}
               InputProps={{
                 startAdornment: (
@@ -116,13 +116,18 @@ const Login = () => {
             </Button>
             <Grid container justifyContent="space-between">
               <Grid item>
-                <Button  component={Link} to="/register" size="small">
+                <Button component={Link} to="/register" size="small">
                   Don't have an account? Sign Up
                 </Button>
               </Grid>
             </Grid>
           </Box>
-          {error && <div style={{ color: "red" }}>{error}</div>}{" "}
+          
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
           {/* הצגת שגיאות */}
         </Box>
       </Paper>

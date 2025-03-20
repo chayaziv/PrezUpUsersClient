@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { PresentationType } from "../types/presentation";
 
-import PresentationCard from "./PresentationCard";
+import PresentationCard from "./PresentationDetails";
 import { fetchMyPresentations } from "../store/myPresentations";
 import { AppDispatch } from "../store/store";
 

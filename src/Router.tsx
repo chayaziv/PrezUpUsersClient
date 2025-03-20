@@ -1,6 +1,5 @@
 import Home from "./pages/Home";
 
-
 import { createBrowserRouter } from "react-router-dom";
 import Login from "./components/Login";
 import About from "./pages/About";
@@ -10,6 +9,7 @@ import MyPresentations from "./components/MyPresentations";
 import PublicPresentations from "./components/PublicPresentation";
 import PresentationComparison from "./components/PresentationComparison";
 import AddRecording from "./components/AddRecording";
+import PresentationDetails from "./components/PresentationDetails";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +44,11 @@ export const router = createBrowserRouter([
       {
         path: "public-presentations",
         element: <PublicPresentations />,
+        children: [],
+      },
+      {
+        path: "public-presentations/:id",
+        element: <PresentationDetails />,
       },
       {
         path: "compare",

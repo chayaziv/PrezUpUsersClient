@@ -155,6 +155,7 @@
 
 // export default Register;
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -174,14 +175,14 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import useAuth from "../hooks/useAuth"; // הייבוא של ה-Hook
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [userName, setUserName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const { handleRegister, loading, error } = useAuth(); // שימוש ב-Hook לניהול רישום
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -189,6 +190,7 @@ const Register = () => {
     const { success } = await handleRegister(userName, userEmail, password);
     if (success) {
       // אם הרישום הצליח, אפשר להמשיך למקום הבא או להפעיל פעולה כלשהי
+      navigate("/home");
     }
   };
 
@@ -290,8 +292,11 @@ const Register = () => {
               </Grid>
             </Grid>
           </Box>
-          {error && <div style={{ color: "red" }}>{error}</div>}{" "}
-          {/* הצגת שגיאות */}
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}{" "}
         </Box>
       </Paper>
     </Container>
