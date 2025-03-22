@@ -8,8 +8,9 @@ import Register from "./components/Register";
 import MyPresentations from "./components/MyPresentations";
 import PublicPresentations from "./components/PublicPresentation";
 import PresentationComparison from "./components/PresentationComparison";
-import AddRecording from "./components/record/AddRecording";
+
 import PresentationDetails from "./components/presentation/PresentationDetails";
+import RecordManager from "./components/record2/RecordManager";
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +27,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "record",
-        element: <AddRecording />,
+        element: <RecordManager />,
       },
 
       {
