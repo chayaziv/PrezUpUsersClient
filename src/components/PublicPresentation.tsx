@@ -3,9 +3,18 @@ import { useEffect, useState } from "react";
 import { AppDispatch } from "../store/store";
 import { fetchPublicPresentations } from "../store/PublicPresentationsSlice";
 import { PresentationType } from "../types/presentation";
-import { CircularProgress, Box, Container, Grid, Typography } from "@mui/material";
-import SearchBar from "./SearchBar";
+import {
+  CircularProgress,
+  Box,
+  Container,
+  Grid,
+  Typography,
+  TextField,
+  Chip,
+} from "@mui/material";
 import PresentationCard from "./PresentationCard";
+import { TagType } from "../types/tag";
+import { fetchTags } from "../store/tagsSlice";
 
 const PublicPresentations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,25 +28,37 @@ const PublicPresentations = () => {
   );
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [tags, setTags] = useState<string[]>([
-    "speech",
-    "music",
-    "comedy",
-    "education",
-    "technology",
-  ]);
+  const [selectedTags, setSelectedTags] = useState<TagType[]>([]);
 
   useEffect(() => {
     dispatch(fetchPublicPresentations());
+    dispatch(fetchTags());
   }, [dispatch]);
 
+  const tags=useSelector((state: { tags: { list: TagType[] } }) => state.tags.list);
+  // פונקציה לשינוי מצב התגיות
+  const handleTagClick = (tag: TagType) => {
+    console.log("Is tag selected?", selectedTags.some((t) => t.id === tag.id));
+  
+    setSelectedTags((prev) => {
+      // אם התגית כבר נבחרה (בהשוואת id), הסר אותה, אחרת הוסף אותה
+      const newSelectedTags = prev.some((t) => t.id === tag.id)
+        ? prev.filter((selectedTag) => selectedTag.id !== tag.id)
+        : [...prev, tag];
+      
+      console.log("Updated selectedTags:", newSelectedTags);
+      return newSelectedTags;
+    });
+  };
   // פילטרציה לפי שם ותגיות
   const filteredPresentations = presentations.filter((presentation) => {
     const matchesTitle = presentation.title
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
-    // const matchesTags = tags.every(tag => presentation.tags.includes(tag)); // אם יש חפיפות עם תגיות
-    const matchesTags = true; // אם אין חפיפות עם תגיות
+      const matchesTags =
+      selectedTags.length === 0 ||
+      presentation.tags.some((tag) => selectedTags.some((selectedTag) => selectedTag.id === tag.id));
+     // אם אין חפיפות עם תגיות
     return matchesTitle && matchesTags;
   });
 
@@ -48,12 +69,35 @@ const PublicPresentations = () => {
       </Typography>
       <Box sx={{ marginTop: 4 }}>
         {/* חיפוש ותגיות */}
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          tags={tags}
-          setTags={setTags}
-        />
+        <Box sx={{ marginBottom: 4 }}>
+          {/* שדה חיפוש */}
+          <TextField
+            label="Search by title"
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ marginBottom: 3 }}
+          />
+
+          {/* רשימת תגיות */}
+
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {tags.map((tag) => (
+              <Chip
+                key={tag.id}
+                label={tag.name}
+                variant="outlined"
+                
+                sx={{
+                  cursor: "pointer",
+                  borderColor: selectedTags.some((selectedTag) => selectedTag.id === tag.id) ? "secondary.main" : "primary.main", // שינוי צבע הגבול
+                }}
+                onClick={() => handleTagClick(tag)} // פונקציה להוסיף בהמשך
+              />
+            ))}
+          </Box>
+        </Box>
 
         {/* הצגת פרזנטציות */}
         {loading ? (

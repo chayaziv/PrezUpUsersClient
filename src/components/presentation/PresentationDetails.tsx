@@ -65,6 +65,7 @@ const PresentationDetails = () => {
       <PresentationHeader
         title={presentation.title}
         score={presentation.score}
+        tags={presentation.tags}
       />
       <Box
         sx={{

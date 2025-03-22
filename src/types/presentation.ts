@@ -1,3 +1,6 @@
+import { TagType } from "./tag";
+
+
 export interface PresentationType {
   id: number;
   title: string;
@@ -14,6 +17,7 @@ export interface PresentationType {
   speechStyleFeedback: string;
   score: number;
   tips: string;
+  tags: TagType[];
 }
 
 export const initialPresentationState: PresentationType = {
@@ -32,4 +36,5 @@ export const initialPresentationState: PresentationType = {
   speechStyleFeedback: "",
   score: 0,
   tips: "",
+  tags: [],
 };
