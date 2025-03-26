@@ -47,6 +47,8 @@ const DEFAULT_PRESENTATION: PresentationType = {
   tags: [],
   isPublic: false,
   createdAt: new Date().toISOString(),
+  duration: 0,
+  user: undefined
 };
 
 const UserPresentations = () => {

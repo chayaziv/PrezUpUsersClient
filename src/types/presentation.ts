@@ -1,4 +1,5 @@
 import { TagType } from "./tag";
+import { UserType } from "./user";
 
 export interface PresentationType {
   id: number;
@@ -19,6 +20,9 @@ export interface PresentationType {
   isPublic: boolean;
   createdAt: string;
   tags: TagType[];
+  duration: number;
+  user: UserType;
+  
 }
 
 export const initialPresentationState: PresentationType = {
@@ -40,4 +44,6 @@ export const initialPresentationState: PresentationType = {
   tags: [],
   isPublic: false,
   createdAt: "2025-03-26T00:00:00.000Z",
+  duration: 0,
+  user: undefined
 };
