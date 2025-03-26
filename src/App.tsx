@@ -4,8 +4,7 @@ import { Provider } from "react-redux";
 
 import { theme } from "./theme";
 import store from "./store/store";
-import { router } from "./router";
-
+import { router } from "./Router";
 
 function App() {
   return (
