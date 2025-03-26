@@ -1,14 +1,16 @@
 import { RouterProvider } from "react-router-dom";
-import "./App.css";
-import { router } from "./Router";
-import { Provider } from "react-redux";
-import store from "./store/store";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { createRouter } from "./router";
+import { theme } from "./theme";
 
 function App() {
+  const router = createRouter();
+
   return (
-    <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <RouterProvider router={router} />
-    </Provider>
+    </ThemeProvider>
   );
 }
 

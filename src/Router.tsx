@@ -1,60 +1,73 @@
-import Home from "./pages/Home";
-
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./components/Login";
+import MainLayout from "./layouts/MainLayout";
+import RecordingFlow from "./pages/RecordingFlow";
+import Home from "./pages/Home";
 import About from "./pages/About";
-import AppLayout from "./components/AppLayout";
-import Register from "./components/Register";
-import MyPresentations from "./components/MyPresentations";
-import PublicPresentations from "./components/PublicPresentation";
-import PresentationComparison from "./components/PresentationComparison";
+import SignIn from "./pages/auth/SignIn";
+import SignUp from "./pages/auth/SignUp";
+import AllPresentations from "./pages/presentations/AllPresentations";
+import Comparisons from "./pages/Comparisons";
+import UserProfile from "./pages/UserProfile";
+import Notifications from "./pages/Notifications";
+import CustomerChat from "./pages/CustomerChat";
+import NotFound from "./pages/NotFound";
+import PresentationDetail from "./pages/presentations/PresentationDetail";
 
-import PresentationDetails from "./components/presentation/PresentationDetails";
-import RecordManager from "./components/record2/RecordManager";
-
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <AppLayout />,
-    children: [
-      {
-        path: "home",
-        element: <Home />,
-      },
-      {
-        path: "about",
-        element: <About />,
-      },
-      {
-        path: "record",
-        element: <RecordManager />,
-      },
-
-      {
-        path: "login",
-        element: <Login />,
-      },
-      {
-        path: "register",
-        element: <Register />,
-      },
-      {
-        path: "my-presentations",
-        element: <MyPresentations />,
-      },
-      {
-        path: "public-presentations",
-        element: <PublicPresentations />,
-        children: [],
-      },
-      {
-        path: "public-presentations/:id",
-        element: <PresentationDetails />,
-      },
-      {
-        path: "compare",
-        element: <PresentationComparison />,
-      },
-    ],
-  },
-]);
+export const createRouter = () => {
+  return createBrowserRouter([
+    {
+      path: "/",
+      element: <MainLayout />,
+      children: [
+        {
+          path: "/",
+          element: <Home />,
+        },
+        {
+          path: "about",
+          element: <About />,
+        },
+        {
+          path: "auth/signin",
+          element: <SignIn />,
+        },
+        {
+          path: "auth/signup",
+          element: <SignUp />,
+        },
+        {
+          path: "record",
+          element: <RecordingFlow />,
+        },
+        {
+          path: "presentations",
+          element: <AllPresentations />,
+        },
+        {
+          path: "presentations/:id",
+          element: <PresentationDetail />,
+        },
+        {
+          path: "comparisons",
+          element: <Comparisons />,
+        },
+        {
+          path: "profile",
+          element: <UserProfile />,
+        },
+        {
+          path: "notifications",
+          element: <Notifications />,
+        },
+        {
+          path: "chat",
+          element: <CustomerChat />,
+        },
+        {
+          path: "*",
+          element: <NotFound />,
+        },
+      ],
+    },
+  ]);
+};
