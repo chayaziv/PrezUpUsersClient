@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { PresentationType } from "../types/presentation2";
-import API from "../axiosInstance";
+import { PresentationType } from "@/types/presentation";
+import API from "../../axiosInstance";
 
 export const fetchPublicPresentations = createAsyncThunk(
   "publicPresentations/fetch",

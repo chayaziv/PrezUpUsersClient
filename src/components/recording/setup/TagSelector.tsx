@@ -2,15 +2,42 @@ import { Autocomplete, TextField, Chip, Typography, Box } from "@mui/material";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material/styles";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../store/store";
+import { useEffect, useState } from "react";
+import { fetchTags } from "../../../store/slices/tagsSlice";
+import { TagType } from "@/types/tag";
 
 interface TagSelectorProps {
-  tags: string[];
-  setTags: (tags: string[]) => void;
-  suggestedTags: string[];
+  tags: TagType[];
+  setTags: (tags: TagType[]) => void;
 }
 
-const TagSelector = ({ tags, setTags, suggestedTags }: TagSelectorProps) => {
+const TagSelector: React.FC<TagSelectorProps> = ({ tags, setTags }) => {
   const theme = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
+  const [availableTags, setAvailableTags] = useState<TagType[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      setLoading(true);
+      try {
+        const result = await dispatch(fetchTags()).unwrap();
+        setAvailableTags(result);
+      } catch (error) {
+        console.error("Failed to load tags:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTags();
+  }, [dispatch]);
+
+  const handleTagChange = (event: React.SyntheticEvent, value: TagType[]) => {
+    setTags(value);
+  };
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -29,33 +56,39 @@ const TagSelector = ({ tags, setTags, suggestedTags }: TagSelectorProps) => {
 
       <Autocomplete
         multiple
-        id="tags-autocomplete"
-        options={suggestedTags}
+        options={availableTags}
+        getOptionLabel={(option) => option.name}
         value={tags}
-        onChange={(_, newValue) => setTags(newValue)}
+        onChange={handleTagChange}
+        loading={loading}
         renderInput={(params) => (
           <TextField
             {...params}
-            variant="outlined"
-            placeholder="Add tags to help categorize your presentation"
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 1.5,
-              },
+            label="Tags"
+            placeholder="Select tags"
+            InputProps={{
+              ...params.InputProps,
+              startAdornment: (
+                <>
+                  <LocalOfferIcon sx={{ mr: 1, color: "primary.main" }} />
+                  {params.InputProps.startAdornment}
+                </>
+              ),
             }}
           />
         )}
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
             <Chip
-              label={option}
               {...getTagProps({ index })}
+              key={option.id}
+              label={option.name}
+              color="primary"
               variant="outlined"
               sx={{
-                borderRadius: 1,
-                backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                borderColor: alpha(theme.palette.primary.main, 0.2),
-                color: "text.primary",
+                borderRadius: 2,
+                background: alpha(theme.palette.primary.main, 0.05),
+                borderColor: alpha(theme.palette.primary.main, 0.3),
               }}
             />
           ))

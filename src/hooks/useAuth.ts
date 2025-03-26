@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { loginUser, registerUser } from "../service/apiService";
 import { useDispatch } from "react-redux";
-import { setUser } from "../store/currentUserSlice";
+import { setUser } from "@/store/slices/currentUserSlice";
+import { clearUser } from "@/store/slices/currentUserSlice";
 
 const useAuth = () => {
   const dispatch = useDispatch();
@@ -10,7 +11,7 @@ const useAuth = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("currentUser");
+    dispatch(clearUser());
     window.location.href = "/home";
   };
 

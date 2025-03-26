@@ -16,6 +16,8 @@ export interface PresentationType {
   speechStyleFeedback: string;
   score: number;
   tips: string;
+  isPublic: boolean;
+  createdAt: string;
   tags: TagType[];
 }
 
@@ -36,4 +38,6 @@ export const initialPresentationState: PresentationType = {
   score: 0,
   tips: "",
   tags: [],
+  isPublic: false,
+  createdAt: "2025-03-26T00:00:00.000Z",
 };

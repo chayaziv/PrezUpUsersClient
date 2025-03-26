@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, StoreType } from "@/store/store";
+import {
+  fetchMyPresentations,
+  deletePresentation,
+  clearError,
+} from "@/store/slices/myPresentations";
 import {
   Typography,
   Box,
@@ -13,48 +20,48 @@ import {
   Button,
   CircularProgress,
   SelectChangeEvent,
+  Alert,
+  Snackbar,
 } from "@mui/material";
-import { PresentationSummary } from "../../types/presentation2";
+
 import UserPresentationCard from "./UserPresentationCard";
 import PresentationFilters from "../presentations/PresentationFilters";
+import { PresentationType } from "@/types/presentation";
 
-// Mock data for user presentations
-const mockUserPresentations: PresentationSummary[] = Array.from(
-  { length: 12 },
-  (_, i) => ({
-    id: i + 1,
-    title: `My Presentation ${i + 1}: ${
-      [
-        "Project Proposal",
-        "Team Update",
-        "Quarterly Review",
-        "Market Analysis",
-        "Product Demo",
-      ][i % 5]
-    }`,
-    createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-    thumbnailUrl: "/placeholder.svg",
-    score: Math.floor(Math.random() * 50) + 50, // Score between 50-100
-    isPublic: Math.random() > 0.5,
-    tags: [
-      { id: 1, name: "Business" },
-      { id: 2, name: "Personal" },
-      { id: 3, name: "Interview" },
-      { id: 4, name: "Technical" },
-      { id: 5, name: "Sales" },
-    ].slice(0, Math.floor(Math.random() * 3) + 1),
-  })
-);
+const DEFAULT_PRESENTATION: PresentationType = {
+  id: 0,
+  title: "No Title",
+  fileUrl: "/placeholder.svg",
+  clarity: 0,
+  clarityFeedback: "",
+  fluency: 0,
+  fluencyFeedback: "",
+  confidence: 0,
+  confidenceFeedback: "",
+  engagement: 0,
+  engagementFeedback: "",
+  speechStyle: 0,
+  speechStyleFeedback: "",
+  score: 0,
+  tips: "",
+  tags: [],
+  isPublic: false,
+  createdAt: new Date().toISOString(),
+};
 
 const UserPresentations = () => {
-  const [presentations, setPresentations] = useState<PresentationSummary[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const {
+    list: presentations = [],
+    loading = false,
+    error = null,
+  } = useSelector((state: StoreType) => state.myPresentations);
   const [filteredPresentations, setFilteredPresentations] = useState<
-    PresentationSummary[]
+    PresentationType[]
   >([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [tagFilter, setTagFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [presentationToDelete, setPresentationToDelete] = useState<
@@ -63,19 +70,12 @@ const UserPresentations = () => {
   const itemsPerPage = 6;
 
   const allTags = Array.from(
-    new Set(mockUserPresentations.flatMap((p) => p.tags.map((t) => t.name)))
+    new Set(presentations.flatMap((p) => p.tags.map((t) => t.name)))
   );
 
   useEffect(() => {
-    // Simulate API load
-    const timer = setTimeout(() => {
-      setPresentations(mockUserPresentations);
-      setFilteredPresentations(mockUserPresentations);
-      setLoading(false);
-    }, 800);
-
-    return () => clearTimeout(timer);
-  }, []);
+    dispatch(fetchMyPresentations());
+  }, [dispatch]);
 
   useEffect(() => {
     let result = [...presentations];
@@ -150,13 +150,9 @@ const UserPresentations = () => {
     setDeleteDialogOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (presentationToDelete !== null) {
-      // Filter out the deleted presentation
-      const updatedPresentations = presentations.filter(
-        (p) => p.id !== presentationToDelete
-      );
-      setPresentations(updatedPresentations);
+      await dispatch(deletePresentation(presentationToDelete));
     }
     setDeleteDialogOpen(false);
     setPresentationToDelete(null);
@@ -168,14 +164,12 @@ const UserPresentations = () => {
   };
 
   const handleTogglePublic = (id: number) => {
-    // Update the isPublic status of the presentation
-    const updatedPresentations = presentations.map((p) => {
-      if (p.id === id) {
-        return { ...p, isPublic: !p.isPublic };
-      }
-      return p;
-    });
-    setPresentations(updatedPresentations);
+    // TODO: Implement toggle public functionality with API
+    console.log("Toggle public for presentation:", id);
+  };
+
+  const handleCloseError = () => {
+    dispatch(clearError());
   };
 
   // Get current page items
@@ -293,6 +287,22 @@ const UserPresentations = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

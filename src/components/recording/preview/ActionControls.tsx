@@ -139,7 +139,7 @@ const ActionControls: React.FC<ActionControlsProps> = ({
               width: '200%',
               height: '200%',
               borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(228, 218, 218, 0.3) 0%, transparent 70%)',
               opacity: 0,
               transition: 'opacity 0.5s',
             },

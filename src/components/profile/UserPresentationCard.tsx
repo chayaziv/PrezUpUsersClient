@@ -1,7 +1,6 @@
 import {
   Card,
   CardContent,
-  CardMedia,
   Typography,
   Box,
   Rating,
@@ -12,12 +11,16 @@ import {
   FormControlLabel,
   Tooltip,
   Stack,
+  Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { PresentationSummary } from "../../types/presentation2";
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { PresentationType } from "@/types/presentation";
+import { useNavigate } from "react-router-dom";
 
 interface UserPresentationCardProps {
-  presentation: PresentationSummary;
+  presentation: PresentationType;
   formatDate: (dateString: string) => string;
   onDeleteClick: (id: number) => void;
   onTogglePublic: (id: number) => void;
@@ -29,6 +32,12 @@ const UserPresentationCard = ({
   onDeleteClick,
   onTogglePublic,
 }: UserPresentationCardProps) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = () => {
+    navigate(`/presentations/${presentation.id}`);
+  };
+
   return (
     <Card
       sx={{
@@ -45,16 +54,23 @@ const UserPresentationCard = ({
         },
       }}
     >
-      <CardMedia
-        component="img"
-        height="180"
-        image={presentation.thumbnailUrl}
-        alt={presentation.title}
+      <CardContent
         sx={{
-          objectFit: "cover",
-          objectPosition: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "180px",
+          bgcolor: "grey.50",
+          borderBottom: "1px solid",
+          borderColor: "grey.200",
         }}
-      />
+      >
+        <PlayCircleOutlineIcon sx={{ fontSize: 60, color: "primary.main" }} />
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          Recording Available
+        </Typography>
+      </CardContent>
       <CardContent sx={{ flexGrow: 1, pt: 2, px: 2.5 }}>
         <Typography
           gutterBottom
@@ -124,7 +140,15 @@ const UserPresentationCard = ({
           }
         />
       </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 1.5 }}>
+      <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 1.5 }}>
+        <Button
+          startIcon={<VisibilityIcon />}
+          size="small"
+          onClick={handleViewDetails}
+          sx={{ color: "primary.main" }}
+        >
+          View Details
+        </Button>
         <Tooltip title="Delete presentation">
           <IconButton
             size="small"

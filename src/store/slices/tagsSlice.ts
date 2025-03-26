@@ -1,18 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import API from "../axiosInstance";
-import { TagType } from "../types/tag";
+import API from "../../axiosInstance";
+import { TagType } from "../../types/tag";
 
-export const fetchTags = createAsyncThunk(
-  "tags/fetch",
-  async (_, thunkAPI) => {
-    try {
-      const response = await API.get("/tags");
-      return (response.data?.data as TagType[]) ?? ([] as TagType[]);
-    } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message);
-    }
+export const fetchTags = createAsyncThunk("tags/fetch", async (_, thunkAPI) => {
+  try {
+    const response = await API.get("/tags");
+    return (response.data?.data as TagType[]) ?? ([] as TagType[]);
+  } catch (e: any) {
+    return thunkAPI.rejectWithValue(e.message);
   }
-);
+});
 
 const tagsSlice = createSlice({
   name: "tags",

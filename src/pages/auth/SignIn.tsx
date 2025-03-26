@@ -15,6 +15,8 @@ import {
   useTheme,
   Divider,
   Fade,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import {
   LockOutlined as LockOutlinedIcon,
@@ -24,62 +26,35 @@ import {
   Google as GoogleIcon,
   GitHub as GitHubIcon,
 } from "@mui/icons-material";
-
-// Mock auth service (would be replaced with real implementation)
-const mockAuthService = {
-  login: (email: string, password: string) => {
-    // This would be an API call in a real app
-    if (email && password) {
-      // Store auth token and user info in localStorage for persistence
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userEmail", email);
-      return true;
-    }
-    return false;
-  },
-};
+import useAuth from "../../hooks/useAuth";
 
 const SignIn = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { handleLogin, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
-    setError("");
+    const result = await handleLogin(email, password);
 
-    try {
-      // Simulating API request delay
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const success = mockAuthService.login(email, password);
-
-      if (success) {
-        // Force reload to update UI state based on authentication
-        window.location.href = "/";
-      } else {
-        setError("Invalid email or password");
-      }
-    } catch (err) {
-      setError("An error occurred during sign in");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+    if (result.success) {
+      navigate("/");
+    } else {
+      setOpenSnackbar(true);
     }
   };
 
   const handleSocialLogin = (provider: string) => {
-    setIsLoading(true);
     // Show service unavailable message
-    setTimeout(() => {
-      setIsLoading(false);
-      alert("Service is currently unavailable. Please try again later.");
-    }, 500);
+    setOpenSnackbar(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -118,16 +93,6 @@ const SignIn = () => {
             Sign In
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-            {error && (
-              <Typography
-                color="error"
-                variant="body2"
-                align="center"
-                sx={{ mb: 2, fontWeight: 500 }}
-              >
-                {error}
-              </Typography>
-            )}
             <TextField
               margin="normal"
               required
@@ -139,7 +104,7 @@ const SignIn = () => {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              error={!!error && !email}
+              error={!!error}
               InputProps={{
                 sx: { borderRadius: 2 },
               }}
@@ -155,7 +120,7 @@ const SignIn = () => {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              error={!!error && !password}
+              error={!!error}
               InputProps={{
                 sx: { borderRadius: 2 },
                 endAdornment: (
@@ -179,7 +144,7 @@ const SignIn = () => {
               type="submit"
               fullWidth
               variant="contained"
-              disabled={isLoading}
+              disabled={loading}
               sx={{
                 mt: 3,
                 mb: 2,
@@ -195,7 +160,7 @@ const SignIn = () => {
               }}
               endIcon={<LoginIcon />}
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
 
             <Divider sx={{ my: 2 }}>
@@ -265,6 +230,20 @@ const SignIn = () => {
             </Grid>
           </Box>
         </Paper>
+        <Snackbar
+          open={openSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="error"
+            sx={{ width: "100%" }}
+          >
+            {error || "An error occurred. Please try again."}
+          </Alert>
+        </Snackbar>
       </Container>
     </Fade>
   );

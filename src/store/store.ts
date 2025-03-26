@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import myPresentationsSlice from "./myPresentations";
-import publicPresentationsSlice from "./PublicPresentationsSlice";
-import currentUserSlice from "./currentUserSlice";
-import tagsSlice from "./tagsSlice";
+import myPresentationsSlice from "./slices/myPresentations";
+import publicPresentationsSlice from "./slices/PublicPresentationsSlice";
+
+import tagsSlice from "./slices/tagsSlice";
+import currentUserSlice from "./slices/currentUserSlice";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,5 @@ const store = configureStore({
 
 export type StoreType = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
 export type RootState = ReturnType<typeof store.getState>;
-
 export default store;

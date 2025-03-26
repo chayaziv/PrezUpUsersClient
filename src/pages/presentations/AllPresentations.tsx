@@ -9,64 +9,34 @@ import {
   Divider,
   SelectChangeEvent,
 } from "@mui/material";
-import { PresentationSummary } from "../../types/presentation2";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../store/store";
+import { fetchPublicPresentations } from "../../store/slices/PublicPresentationsSlice";
 import PresentationCard from "../../components/presentations/PresentationCard";
 import PresentationFilters from "../../components/presentations/PresentationFilters";
-
-// Mock data for presentations
-const mockPresentations: PresentationSummary[] = Array.from(
-  { length: 20 },
-  (_, i) => ({
-    id: i + 1,
-    title: `Presentation ${i + 1}: ${
-      [
-        "Business Strategy",
-        "Marketing Plan",
-        "Sales Pitch",
-        "Project Update",
-        "Product Launch",
-      ][i % 5]
-    }`,
-    createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-    thumbnailUrl: "/placeholder.svg",
-    score: Math.floor(Math.random() * 50) + 50, // Score between 50-100
-    isPublic: true,
-    tags: [
-      { id: 1, name: "Business" },
-      { id: 2, name: "Technology" },
-      { id: 3, name: "Marketing" },
-      { id: 4, name: "Education" },
-      { id: 5, name: "Sales" },
-    ].slice(0, Math.floor(Math.random() * 3) + 1),
-  })
-);
+import { PresentationType } from "@/types/presentation";
 
 const AllPresentations = () => {
-  const [presentations, setPresentations] = useState<PresentationSummary[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const { list: presentations, loading } = useSelector(
+    (state: RootState) => state.publicPresentations
+  );
   const [filteredPresentations, setFilteredPresentations] = useState<
-    PresentationSummary[]
+    PresentationType[]
   >([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
   const [tagFilter, setTagFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const itemsPerPage = 9;
 
-  const allTags = Array.from(
-    new Set(mockPresentations.flatMap((p) => p.tags.map((t) => t.name)))
-  );
-
   useEffect(() => {
-    // Simulate API load
-    const timer = setTimeout(() => {
-      setPresentations(mockPresentations);
-      setFilteredPresentations(mockPresentations);
-      setLoading(false);
-    }, 800);
+    dispatch(fetchPublicPresentations());
+  }, [dispatch]);
 
-    return () => clearTimeout(timer);
-  }, []);
+  const allTags = Array.from(
+    new Set(presentations.flatMap((p) => p.tags.map((t) => t.name)))
+  );
 
   useEffect(() => {
     let result = [...presentations];

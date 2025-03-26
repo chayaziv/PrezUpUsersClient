@@ -1,4 +1,7 @@
 import React, { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { addPresentation } from "@/store/slices/myPresentations";
+import { AppDispatch } from "@/store/store";
 import {
   Box,
   Typography,
@@ -17,13 +20,8 @@ import ActionControls from "./preview/ActionControls";
 import UploadProgress from "./upload/UploadProgress";
 import UploadComplete from "./upload/UploadComplete";
 import ResetButton from "./preview/ResetButton";
-
-type RecordingData = {
-  name: string;
-  isPublic: boolean;
-  tags: string[];
-  videoBlob?: Blob;
-};
+import { TagType } from "@/types/tag";
+import { RecordingData } from "@/types/recording";
 
 interface RecordingFinalizeProps {
   recordingData: RecordingData;
@@ -34,6 +32,7 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
   recordingData,
   onReset,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadComplete, setUploadComplete] = useState(false);
@@ -75,30 +74,50 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    if (!recordingData.videoBlob) {
+      setError("No recording data available");
+      return;
+    }
+
     setIsUploading(true);
     setError(null);
 
-    // Simulate upload with progress updates
-    const interval = setInterval(() => {
-      setUploadProgress((prev) => {
-        const newProgress = prev + 10;
-        if (newProgress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setUploadComplete(true);
-            setIsUploading(false);
-            setSnackbar({
-              open: true,
-              message: "Your presentation has been successfully uploaded.",
-              severity: "success",
-            });
-          }, 500);
-          return 100;
-        }
-        return newProgress;
+    try {
+      const formData = new FormData();
+      formData.append(
+        "audio",
+        recordingData.videoBlob,
+        `${recordingData.name}.webm`
+      );
+      formData.append("title", recordingData.name);
+      formData.append("isPublic", recordingData.isPublic.toString());
+
+      // וידוא שהתגיות נשלחות בצורה תקינה
+      const tagsJson =
+        recordingData.tags && recordingData.tags.length > 0
+          ? JSON.stringify(recordingData.tags)
+          : "[]";
+      formData.append("tagsJson", tagsJson);
+
+      await dispatch(addPresentation(formData)).unwrap();
+
+      setUploadComplete(true);
+      setSnackbar({
+        open: true,
+        message: "Your presentation has been successfully uploaded.",
+        severity: "success",
       });
-    }, 400);
+    } catch (error: any) {
+      setError(error.message || "Failed to upload presentation");
+      setSnackbar({
+        open: true,
+        message: "Failed to upload presentation. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleCopyLink = () => {
@@ -221,7 +240,7 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
             p: 3,
             borderRadius: 2,
             background:
-              "linear-gradient(145deg, rgba(0, 20, 30, 0.3) 0%, rgba(0, 40, 50, 0.2) 100%)",
+              "linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, rgba(170, 215, 215, 0.2) 100%)",
             backdropFilter: "blur(10px)",
             border: "1px solid rgba(0, 131, 143, 0.1)",
             boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05)",

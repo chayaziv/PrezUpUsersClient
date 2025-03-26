@@ -15,13 +15,8 @@ import RecordingCapture from "@/components/recording/RecordingCapture";
 import RecordingFinalize from "@/components/recording/RecordingFinalize";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
-
-type RecordingData = {
-  name: string;
-  isPublic: boolean;
-  tags: string[];
-  videoBlob?: Blob;
-};
+import { TagType } from "@/types/tag";
+import { RecordingData } from "@/types/recording";
 
 const RecordingFlow = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
