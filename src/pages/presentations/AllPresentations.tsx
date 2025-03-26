@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -8,43 +7,54 @@ import {
   Pagination,
   CircularProgress,
   Divider,
-  SelectChangeEvent
-} from '@mui/material';
-import { PresentationSummary } from '../../types/presentation';
-import PresentationCard from '../../components/presentations/PresentationCard';
-import PresentationFilters from '../../components/presentations/PresentationFilters';
+  SelectChangeEvent,
+} from "@mui/material";
+import { PresentationSummary } from "../../types/presentation2";
+import PresentationCard from "../../components/presentations/PresentationCard";
+import PresentationFilters from "../../components/presentations/PresentationFilters";
 
 // Mock data for presentations
-const mockPresentations: PresentationSummary[] = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  title: `Presentation ${i + 1}: ${['Business Strategy', 'Marketing Plan', 'Sales Pitch', 'Project Update', 'Product Launch'][i % 5]}`,
-  createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
-  thumbnailUrl: '/placeholder.svg',
-  score: Math.floor(Math.random() * 50) + 50, // Score between 50-100
-  isPublic: true,
-  tags: [
-    { id: 1, name: 'Business' },
-    { id: 2, name: 'Technology' },
-    { id: 3, name: 'Marketing' },
-    { id: 4, name: 'Education' },
-    { id: 5, name: 'Sales' }
-  ].slice(0, Math.floor(Math.random() * 3) + 1)
-}));
+const mockPresentations: PresentationSummary[] = Array.from(
+  { length: 20 },
+  (_, i) => ({
+    id: i + 1,
+    title: `Presentation ${i + 1}: ${
+      [
+        "Business Strategy",
+        "Marketing Plan",
+        "Sales Pitch",
+        "Project Update",
+        "Product Launch",
+      ][i % 5]
+    }`,
+    createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString(),
+    thumbnailUrl: "/placeholder.svg",
+    score: Math.floor(Math.random() * 50) + 50, // Score between 50-100
+    isPublic: true,
+    tags: [
+      { id: 1, name: "Business" },
+      { id: 2, name: "Technology" },
+      { id: 3, name: "Marketing" },
+      { id: 4, name: "Education" },
+      { id: 5, name: "Sales" },
+    ].slice(0, Math.floor(Math.random() * 3) + 1),
+  })
+);
 
 const AllPresentations = () => {
   const [presentations, setPresentations] = useState<PresentationSummary[]>([]);
-  const [filteredPresentations, setFilteredPresentations] = useState<PresentationSummary[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('recent');
-  const [tagFilter, setTagFilter] = useState('all');
+  const [filteredPresentations, setFilteredPresentations] = useState<
+    PresentationSummary[]
+  >([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
+  const [tagFilter, setTagFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const itemsPerPage = 9;
 
   const allTags = Array.from(
-    new Set(
-      mockPresentations.flatMap(p => p.tags.map(t => t.name))
-    )
+    new Set(mockPresentations.flatMap((p) => p.tags.map((t) => t.name)))
   );
 
   useEffect(() => {
@@ -63,31 +73,40 @@ const AllPresentations = () => {
 
     // Apply search filter
     if (searchTerm) {
-      result = result.filter(p => 
-        p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.tags.some(tag => tag.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      result = result.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.tags.some((tag) =>
+            tag.name.toLowerCase().includes(searchTerm.toLowerCase())
+          )
       );
     }
 
     // Apply tag filter
-    if (tagFilter !== 'all') {
-      result = result.filter(p => 
-        p.tags.some(tag => tag.name === tagFilter)
+    if (tagFilter !== "all") {
+      result = result.filter((p) =>
+        p.tags.some((tag) => tag.name === tagFilter)
       );
     }
 
     // Apply sorting
     switch (sortBy) {
-      case 'recent':
-        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      case "recent":
+        result.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
         break;
-      case 'oldest':
-        result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      case "oldest":
+        result.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
         break;
-      case 'highest':
+      case "highest":
         result.sort((a, b) => b.score - a.score);
         break;
-      case 'lowest':
+      case "lowest":
         result.sort((a, b) => a.score - b.score);
         break;
       default:
@@ -110,27 +129,33 @@ const AllPresentations = () => {
     setTagFilter(event.target.value);
   };
 
-  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
     setPage(value);
   };
 
   // Get current page items
   const indexOfLastItem = page * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPresentations.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredPresentations.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, textAlign: 'center' }}>
+      <Container maxWidth="lg" sx={{ py: 4, textAlign: "center" }}>
         <CircularProgress />
         <Typography sx={{ mt: 2 }}>Loading presentations...</Typography>
       </Container>
@@ -144,13 +169,13 @@ const AllPresentations = () => {
         component="h1"
         color="primary"
         gutterBottom
-        sx={{ fontWeight: 'bold', mb: 4 }}
+        sx={{ fontWeight: "bold", mb: 4 }}
       >
         All Presentations
       </Typography>
 
       <Box sx={{ mb: 4 }}>
-        <PresentationFilters 
+        <PresentationFilters
           searchTerm={searchTerm}
           sortBy={sortBy}
           tagFilter={tagFilter}
@@ -167,16 +192,20 @@ const AllPresentations = () => {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
           {filteredPresentations.length} presentations found
         </Typography>
-        
+
         {filteredPresentations.length === 0 ? (
-          <Typography variant="h6" align="center" sx={{ my: 8, color: 'text.secondary' }}>
+          <Typography
+            variant="h6"
+            align="center"
+            sx={{ my: 8, color: "text.secondary" }}
+          >
             No presentations found with the current filters.
           </Typography>
         ) : (
           <Grid container spacing={3}>
             {currentItems.map((presentation) => (
               <Grid item key={presentation.id} xs={12} sm={6} md={4}>
-                <PresentationCard 
+                <PresentationCard
                   presentation={presentation}
                   formatDate={formatDate}
                 />
@@ -187,7 +216,7 @@ const AllPresentations = () => {
       </Box>
 
       {filteredPresentations.length > itemsPerPage && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
           <Pagination
             count={Math.ceil(filteredPresentations.length / itemsPerPage)}
             page={page}

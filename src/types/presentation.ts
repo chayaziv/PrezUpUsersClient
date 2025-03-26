@@ -1,10 +1,9 @@
+import { TagType } from "./tag";
 
-export interface PresentationData {
+export interface PresentationType {
   id: number;
   title: string;
-  createdAt: string;
-  videoUrl: string;
-  thumbnailUrl: string;
+  fileUrl: string;
   clarity: number;
   clarityFeedback: string;
   fluency: number;
@@ -17,29 +16,24 @@ export interface PresentationData {
   speechStyleFeedback: string;
   score: number;
   tips: string;
-  isPublic: boolean;
-  userId: number;
-  tags: Tag[];
+  tags: TagType[];
 }
 
-export interface Tag {
-  id: number;
-  name: string;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  avatarUrl?: string;
-}
-
-export interface PresentationSummary {
-  id: number;
-  title: string;
-  createdAt: string;
-  thumbnailUrl: string;
-  score: number;
-  isPublic: boolean;
-  tags: Tag[];
-}
+export const initialPresentationState: PresentationType = {
+  id: 0,
+  title: "",
+  fileUrl: "",
+  clarity: 0,
+  clarityFeedback: "",
+  fluency: 0,
+  fluencyFeedback: "",
+  confidence: 0,
+  confidenceFeedback: "",
+  engagement: 0,
+  engagementFeedback: "",
+  speechStyle: 0,
+  speechStyleFeedback: "",
+  score: 0,
+  tips: "",
+  tags: [],
+};
