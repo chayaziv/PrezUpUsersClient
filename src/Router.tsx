@@ -13,61 +13,59 @@ import CustomerChat from "./pages/CustomerChat";
 import NotFound from "./pages/NotFound";
 import PresentationDetail from "./pages/presentations/PresentationDetail";
 
-export const createRouter = () => {
-  return createBrowserRouter([
-    {
-      path: "/",
-      element: <MainLayout />,
-      children: [
-        {
-          path: "/",
-          element: <Home />,
-        },
-        {
-          path: "about",
-          element: <About />,
-        },
-        {
-          path: "auth/signin",
-          element: <SignIn />,
-        },
-        {
-          path: "auth/signup",
-          element: <SignUp />,
-        },
-        {
-          path: "record",
-          element: <RecordingFlow />,
-        },
-        {
-          path: "presentations",
-          element: <AllPresentations />,
-        },
-        {
-          path: "presentations/:id",
-          element: <PresentationDetail />,
-        },
-        {
-          path: "comparisons",
-          element: <Comparisons />,
-        },
-        {
-          path: "profile",
-          element: <UserProfile />,
-        },
-        {
-          path: "notifications",
-          element: <Notifications />,
-        },
-        {
-          path: "chat",
-          element: <CustomerChat />,
-        },
-        {
-          path: "*",
-          element: <NotFound />,
-        },
-      ],
-    },
-  ]);
-};
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "auth/signin",
+        element: <SignIn />,
+      },
+      {
+        path: "auth/signup",
+        element: <SignUp />,
+      },
+      {
+        path: "record",
+        element: <RecordingFlow />,
+      },
+      {
+        path: "presentations",
+        element: <AllPresentations />,
+      },
+      {
+        path: "presentations/:id",
+        element: <PresentationDetail />,
+      },
+      {
+        path: "comparisons",
+        element: <Comparisons />,
+      },
+      {
+        path: "profile",
+        element: <UserProfile />,
+      },
+      {
+        path: "notifications",
+        element: <Notifications />,
+      },
+      {
+        path: "chat",
+        element: <CustomerChat />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
+  },
+]);
