@@ -6,6 +6,7 @@ import { theme } from "./theme";
 import store from "./store/store";
 import { router } from "./router";
 
+
 function App() {
   return (
     <Provider store={store}>
