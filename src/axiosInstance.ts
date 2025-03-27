@@ -1,10 +1,10 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 
-const serverUrl = "localhost:5015";
+const serverUrl = process.env.REACT_APP_SERVER_URL;
 
 const API: AxiosInstance = axios.create({
-  baseURL: `http://${serverUrl}/api`,
+  baseURL: `https://${serverUrl}/api`,
 });
 
 API.interceptors.request.use(
