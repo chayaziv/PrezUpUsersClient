@@ -3,32 +3,32 @@ import {
   Container,
   Box,
   Typography,
-  TextField,
   Button,
   Grid,
-  Link,
+  Link as MuiLink,
   Paper,
   Avatar,
-  InputAdornment,
-  IconButton,
+  Divider,
   Snackbar,
   Alert,
   Fade,
-  Divider,
 } from "@mui/material";
 import {
-  PersonAddAlt as PersonAddIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-  HowToReg as HowToRegIcon,
-  LockOutlined as LockOutlinedIcon,
-  Login as LoginIcon,
   Google as GoogleIcon,
   GitHub as GitHubIcon,
 } from "@mui/icons-material";
-import { Link as RouterLink } from "react-router-dom"; // Import RouterLink from react-router-dom
-import { Link as MuiLink } from "@mui/material"; // Import Link from MUI
-import { boolean } from "zod";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  containerStyles,
+  paperStyles,
+  avatarStyles,
+  formStyles,
+  submitButtonStyles,
+  dividerStyles,
+} from "../../styles/authFormStyle.ts";
+import AuthFields from "./helpAUthForm/AuthFields.tsx"; // התאמת הנתיב לפי המיקום
+import SocialButtons from "./helpAUthForm/SocialButtons.tsx";
+
 type RegisterSubmit = (
   name: string,
   email: string,
@@ -50,7 +50,7 @@ interface AuthFormProps {
   linkText: string;
   linkTo: string;
   submitIcon: React.ReactNode;
-  showNameField?: boolean; // רק אם זו הרשמה
+  showNameField?: boolean;
 }
 
 const AuthForm = ({
@@ -96,193 +96,69 @@ const AuthForm = ({
     event.preventDefault();
 
     if (validateForm()) {
-      if (isSignIn) {
-        const result = await (onSubmit as LoginSubmit)(email, password);
-        if (!result.success) {
-          setOpenSnackbar(true);
-        }
-      } else {
-        const result = await (onSubmit as RegisterSubmit)(
-          name,
-          email,
-          password
-        );
-        if (!result.success) {
-          setOpenSnackbar(true);
-        }
+      const result = isSignIn
+        ? await (onSubmit as LoginSubmit)(email, password)
+        : await (onSubmit as RegisterSubmit)(name, email, password);
+
+      if (!result.success) {
+        setOpenSnackbar(true);
       }
     }
   };
+
   const handleSocialLogin = (provider: string) => {
-    // Show service unavailable message
     setOpenSnackbar(true);
   };
+
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
   };
 
   return (
     <Fade in={true} timeout={800}>
-      <Container component="main" maxWidth="xs">
-        <Paper
-          elevation={3}
-          sx={{
-            mt: 8,
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            borderRadius: 2,
-          }}
-        >
-          {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}></Avatar> */}
-
-          <Avatar
-            sx={{
-              m: 1,
-              bgcolor: "primary.main",
-              width: 56,
-              height: 56,
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            }}
-          >
-            {icon}
-          </Avatar>
+      <Container component="main" maxWidth="xs" sx={containerStyles}>
+        <Paper elevation={3} sx={paperStyles}>
+          <Avatar sx={avatarStyles}>{icon}</Avatar>
           <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             {title}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: "100%" }}>
-            {showNameField && (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="name"
-                label="Full Name"
-                name="name"
-                autoComplete="name"
-                autoFocus
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                error={!!errors.name}
-                helperText={errors.name}
-              />
-            )}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              error={!!errors.email}
-              helperText={errors.email}
+          <Box component="form" onSubmit={handleSubmit} sx={formStyles}>
+            <AuthFields
+              isSignIn={isSignIn}
+              showNameField={showNameField}
+              showPassword={showPassword}
+              name={name}
+              email={email}
+              password={password}
+              confirmPassword={confirmPassword}
+              errors={errors}
+              setName={setName}
+              setEmail={setEmail}
+              setPassword={setPassword}
+              setConfirmPassword={setConfirmPassword}
+              toggleShowPassword={() => setShowPassword(!showPassword)}
             />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              id="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={!!errors.password}
-              helperText={errors.password}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            {showNameField && (
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type={showPassword ? "text" : "password"}
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword}
-              />
-            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               disabled={loading}
-              sx={{ mt: 3, mb: 2, py: 1.5 }}
+              sx={submitButtonStyles}
               endIcon={submitIcon}
             >
               {loading ? "Processing..." : submitLabel}
             </Button>
-            <Divider sx={{ my: 2 }}>
+
+            <Divider sx={dividerStyles}>
               <Typography variant="body2" color="text.secondary">
                 OR
               </Typography>
             </Divider>
 
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid item xs={6}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => handleSocialLogin("Google")}
-                  startIcon={<GoogleIcon />}
-                  sx={{
-                    py: 1.2,
-                    borderRadius: 2,
-                    borderWidth: 1.5,
-                    "&:hover": {
-                      borderWidth: 1.5,
-                      backgroundColor: "rgba(66, 133, 244, 0.04)",
-                    },
-                  }}
-                >
-                  Google
-                </Button>
-              </Grid>
-              <Grid item xs={6}>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={() => handleSocialLogin("GitHub")}
-                  startIcon={<GitHubIcon />}
-                  sx={{
-                    py: 1.2,
-                    borderRadius: 2,
-                    borderWidth: 1.5,
-                    "&:hover": {
-                      borderWidth: 1.5,
-                      backgroundColor: "rgba(0, 0, 0, 0.04)",
-                    },
-                  }}
-                >
-                  GitHub
-                </Button>
-              </Grid>
-            </Grid>
+            <SocialButtons
+              onGoogleLogin={() => handleSocialLogin("Google")}
+              onGitHubLogin={() => handleSocialLogin("GitHub")}
+            ></SocialButtons>
 
             <Grid container justifyContent="flex-end">
               <Grid item>
