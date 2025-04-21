@@ -24,7 +24,6 @@ const SignUp = () => {
       title="Sign Up"
       icon={<PersonAddIcon fontSize="large" />}
       submitLabel="Sign Up"
-      showNameField
       onSubmit={onSubmit}
       loading={loading}
       error={error}

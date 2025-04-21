@@ -1,0 +1,2 @@
+export type RegisterSubmit = (name: string, email: string, password: string) => Promise<{ success: boolean }>;
+export type LoginSubmit = (email: string, password: string) => Promise<{ success: boolean }>;

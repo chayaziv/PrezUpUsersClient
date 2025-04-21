@@ -11,14 +11,12 @@ const SignIn = () => {
   const { handleLogin, loading, error } = useAuth();
 
   const onSubmit = async (email: string, password: string) => {
-    
     const result = await handleLogin(email, password);
     if (result.success) {
       navigate("/");
     }
     return result;
   };
-
   return (
     <AuthForm
       isSignIn={true}

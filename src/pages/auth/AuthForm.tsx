@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import {
   Container,
   Box,
@@ -9,12 +9,11 @@ import {
   Paper,
   Avatar,
   Divider,
-  Snackbar,
-  Alert,
-  Fade,
   CircularProgress,
+  Fade,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+
 import {
   containerStyles,
   paperStyles,
@@ -22,19 +21,13 @@ import {
   formStyles,
   submitButtonStyles,
   dividerStyles,
-} from "../../styles/authFormStyle.ts";
-import AuthFields from "./helpAUthForm/AuthFields.tsx"; // התאמת הנתיב לפי המיקום
-import SocialButtons from "./helpAUthForm/SocialButtons.tsx";
+} from "../../styles/authFormStyle";
 
-type RegisterSubmit = (
-  name: string,
-  email: string,
-  password: string
-) => Promise<{ success: boolean }>;
-type LoginSubmit = (
-  email: string,
-  password: string
-) => Promise<{ success: boolean }>;
+import AuthFields from "./AuthFields";
+import SocialButtons from "./SocialButtons";
+import { useAuthForm } from "@/hooks/useAuthForm";
+import { LoginSubmit, RegisterSubmit } from "@/types/authType";
+
 
 interface AuthFormProps {
   isSignIn: boolean;
@@ -61,77 +54,29 @@ const AuthForm = ({
   linkTo,
   submitIcon,
 }: AuthFormProps) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (isSignIn && !name) newErrors.name = "Name is required";
-    if (!email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid";
-
-    if (!password) newErrors.password = "Password is required";
-    else if (password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-
-    if (!isSignIn && password !== confirmPassword)
-      newErrors.confirmPassword = "Passwords do not match";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (validateForm()) {
-      const result = isSignIn
-        ? await (onSubmit as LoginSubmit)(email, password)
-        : await (onSubmit as RegisterSubmit)(name, email, password);
-
-      if (!result.success) {
-        setOpenSnackbar(true);
-      }
-    }
-  };
-
-  const handleSocialLogin = (provider: string) => {
-    setOpenSnackbar(true);
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
+  const {
+    fields,
+    setFields,
+    handleSubmit,
+    handleSocialLogin,
+  } = useAuthForm(isSignIn, onSubmit, error);
 
   return (
-    <Fade in={true} timeout={800}>
+    <Fade in timeout={800}>
       <Container component="main" maxWidth="xs" sx={containerStyles}>
         <Paper elevation={3} sx={paperStyles}>
           <Avatar sx={avatarStyles}>{icon}</Avatar>
           <Typography component="h1" variant="h5" sx={{ mb: 3 }}>
             {title}
           </Typography>
+
           <Box component="form" onSubmit={handleSubmit} sx={formStyles}>
             <AuthFields
               isSignIn={isSignIn}
-              showPassword={showPassword}
-              name={name}
-              email={email}
-              password={password}
-              confirmPassword={confirmPassword}
-              errors={errors}
-              setName={setName}
-              setEmail={setEmail}
-              setPassword={setPassword}
-              setConfirmPassword={setConfirmPassword}
-              toggleShowPassword={() => setShowPassword(!showPassword)}
+              {...fields}
+              {...setFields}
             />
+
             <Button
               type="submit"
               fullWidth
@@ -151,15 +96,13 @@ const AuthForm = ({
             </Button>
 
             <Divider sx={dividerStyles}>
-              <Typography variant="body2" color="text.secondary">
-                OR
-              </Typography>
+              <Typography variant="body2" color="text.secondary">OR</Typography>
             </Divider>
 
             <SocialButtons
               onGoogleLogin={() => handleSocialLogin("Google")}
               onGitHubLogin={() => handleSocialLogin("GitHub")}
-            ></SocialButtons>
+            />
 
             <Grid container justifyContent="flex-end">
               <Grid item>
@@ -170,20 +113,6 @@ const AuthForm = ({
             </Grid>
           </Box>
         </Paper>
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="error"
-            sx={{ width: "100%" }}
-          >
-            {error || "An error occurred. Please try again."}
-          </Alert>
-        </Snackbar>
       </Container>
     </Fade>
   );
