@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { useSnackbar } from "@/hooks/useSnackbar";
 import { LoginSubmit, RegisterSubmit } from "@/types/authType";
+import { em } from "framer-motion/client";
 
 export const useAuthForm = (
   isSignIn: boolean,
@@ -20,7 +21,7 @@ export const useAuthForm = (
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (isSignIn && !name) newErrors.name = "Name is required";
+    if (!isSignIn && !name) newErrors.name = "Name is required";
     if (!email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid";
     if (!password) newErrors.password = "Password is required";
@@ -36,8 +37,9 @@ export const useAuthForm = (
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+   
     if (!validateForm()) return;
-
+    console.log("handleSubmit called",email, password);
     const result = isSignIn
       ? await (onSubmit as LoginSubmit)(email, password)
       : await (onSubmit as RegisterSubmit)(name, email, password);
