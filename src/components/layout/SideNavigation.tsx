@@ -50,11 +50,12 @@ const SideNavigation = ({
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, path: "/" },
     { text: "About", icon: <InfoIcon />, path: "/about" },
-    { text: "Record Presentation", icon: <VideocamIcon />, path: "/record" },
+   
     { text: "Customer Support", icon: <ChatIcon />, path: "/chat" },
   ];
 
   const authenticatedMenuItems = [
+    { text: "Record Presentation", icon: <VideocamIcon />, path: "/record" },
     { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
     {
       text: "All Presentations",

@@ -12,11 +12,8 @@ import {
   Snackbar,
   Alert,
   Fade,
+  CircularProgress,
 } from "@mui/material";
-import {
-  Google as GoogleIcon,
-  GitHub as GitHubIcon,
-} from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 import {
   containerStyles,
@@ -50,7 +47,6 @@ interface AuthFormProps {
   linkText: string;
   linkTo: string;
   submitIcon: React.ReactNode;
-  showNameField?: boolean;
 }
 
 const AuthForm = ({
@@ -64,7 +60,6 @@ const AuthForm = ({
   linkText,
   linkTo,
   submitIcon,
-  showNameField = false,
 }: AuthFormProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -77,7 +72,7 @@ const AuthForm = ({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (showNameField && !name) newErrors.name = "Name is required";
+    if (isSignIn && !name) newErrors.name = "Name is required";
     if (!email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid";
 
@@ -125,7 +120,6 @@ const AuthForm = ({
           <Box component="form" onSubmit={handleSubmit} sx={formStyles}>
             <AuthFields
               isSignIn={isSignIn}
-              showNameField={showNameField}
               showPassword={showPassword}
               name={name}
               email={email}
@@ -144,9 +138,16 @@ const AuthForm = ({
               variant="contained"
               disabled={loading}
               sx={submitButtonStyles}
-              endIcon={submitIcon}
+              endIcon={!loading && submitIcon}
             >
-              {loading ? "Processing..." : submitLabel}
+              {loading ? (
+                <>
+                  <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+                  Signing...
+                </>
+              ) : (
+                submitLabel
+              )}
             </Button>
 
             <Divider sx={dividerStyles}>

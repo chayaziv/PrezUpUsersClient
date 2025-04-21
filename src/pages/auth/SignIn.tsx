@@ -1,17 +1,17 @@
-
-
 import { useNavigate } from "react-router-dom";
-import { LockOutlined as LockOutlinedIcon, Login as LoginIcon } from "@mui/icons-material";
+import {
+  LockOutlined as LockOutlinedIcon,
+  Login as LoginIcon,
+} from "@mui/icons-material";
 import useAuth from "../../hooks/useAuth";
 import AuthForm from "./AuthForm";
-import { log } from "console";
 
 const SignIn = () => {
   const navigate = useNavigate();
   const { handleLogin, loading, error } = useAuth();
 
   const onSubmit = async (email: string, password: string) => {
-    console.log(email,"bsd",password)
+    
     const result = await handleLogin(email, password);
     if (result.success) {
       navigate("/");
@@ -21,7 +21,7 @@ const SignIn = () => {
 
   return (
     <AuthForm
-    isSignIn={true}
+      isSignIn={true}
       title="Sign In"
       icon={<LockOutlinedIcon fontSize="large" />}
       submitLabel="Sign In"

@@ -13,7 +13,7 @@ const MainLayout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [open, setOpen] = useState(!isMobile);
-  const location = useLocation();
+  
 
   // Get auth state from Redux
   const { isLoggedIn, user } = useSelector(

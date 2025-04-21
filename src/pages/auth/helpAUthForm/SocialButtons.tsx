@@ -1,27 +1,23 @@
 import { Button, Grid } from "@mui/material";
-import { Google as GoogleIcon, GitHub as GitHubIcon } from "@mui/icons-material";
-
-const socialButtonStyles = {
-  padding: "10px",
-  textTransform: "none",
-};
-
-const googleButtonHover = {
-  backgroundColor: "#4285F4",
-  color: "#fff",
-};
-
-const githubButtonHover = {
-  backgroundColor: "#333",
-  color: "#fff",
-};
+import {
+  Google as GoogleIcon,
+  GitHub as GitHubIcon,
+} from "@mui/icons-material";
+import {
+  githubButtonHover,
+  googleButtonHover,
+  socialButtonStyles,
+} from "@/styles/authFormStyle";
 
 interface SocialButtonsProps {
   onGoogleLogin: () => void;
   onGitHubLogin: () => void;
 }
 
-const SocialButtons = ({ onGoogleLogin, onGitHubLogin }: SocialButtonsProps) => {
+const SocialButtons = ({
+  onGoogleLogin,
+  onGitHubLogin,
+}: SocialButtonsProps) => {
   return (
     <Grid container spacing={2} sx={{ mb: 2 }}>
       <Grid item xs={6}>
