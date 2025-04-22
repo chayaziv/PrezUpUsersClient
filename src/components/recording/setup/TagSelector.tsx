@@ -1,12 +1,19 @@
 import { Autocomplete, TextField, Chip, Typography, Box } from "@mui/material";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import { useTheme } from "@mui/material/styles";
-import { alpha } from "@mui/material/styles";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../../store/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../store/store";
 import { useEffect, useState } from "react";
 import { fetchTags } from "../../../store/slices/tagsSlice";
 import { TagType } from "@/types/tag";
+import {
+  containerStyles,
+  headerStyles,
+  iconStyles,
+  titleStyles,
+  chipStyles,
+  captionStyles,
+} from "@/styles/tagSelectorStyle";
 
 interface TagSelectorProps {
   tags: TagType[];
@@ -40,16 +47,10 @@ const TagSelector: React.FC<TagSelectorProps> = ({ tags, setTags }) => {
   };
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Box sx={{ display: "flex", alignItems: "flex-start", mb: 1 }}>
-        <LocalOfferIcon
-          fontSize="small"
-          sx={{ mr: 1, mt: 0.5, color: "text.secondary" }}
-        />
-        <Typography
-          variant="body1"
-          sx={{ fontWeight: 500, color: "text.primary" }}
-        >
+    <Box sx={containerStyles}>
+      <Box sx={headerStyles}>
+        <LocalOfferIcon fontSize="small" sx={iconStyles} />
+        <Typography variant="body1" sx={titleStyles}>
           Tags (optional)
         </Typography>
       </Box>
@@ -64,16 +65,9 @@ const TagSelector: React.FC<TagSelectorProps> = ({ tags, setTags }) => {
         renderInput={(params) => (
           <TextField
             {...params}
-            label="Tags"
             placeholder="Select tags"
             InputProps={{
               ...params.InputProps,
-              startAdornment: (
-                <>
-                  <LocalOfferIcon sx={{ mr: 1, color: "primary.main" }} />
-                  {params.InputProps.startAdornment}
-                </>
-              ),
             }}
           />
         )}
@@ -85,20 +79,12 @@ const TagSelector: React.FC<TagSelectorProps> = ({ tags, setTags }) => {
               label={option.name}
               color="primary"
               variant="outlined"
-              sx={{
-                borderRadius: 2,
-                background: alpha(theme.palette.primary.main, 0.05),
-                borderColor: alpha(theme.palette.primary.main, 0.3),
-              }}
+              sx={chipStyles(theme)}
             />
           ))
         }
       />
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ mt: 0.5, display: "block" }}
-      >
+      <Typography variant="caption" sx={captionStyles}>
         Tags help others find your presentation more easily
       </Typography>
     </Box>

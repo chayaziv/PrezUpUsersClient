@@ -7,6 +7,6 @@ export const useSnackbar = (): SnackbarContextProps => {
   if (!context) {
     throw new Error("useSnackbar must be used within a SnackbarProvider");
   }
-  console.log("useSnackbar", context);
+  
   return context;
 };

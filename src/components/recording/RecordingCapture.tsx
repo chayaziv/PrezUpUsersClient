@@ -79,19 +79,11 @@ const RecordingCapture: React.FC<RecordingCaptureProps> = ({
       </Alert>
     );
   }
-
-  return (
-    <Box
-      component={motion.div}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      sx={{ width: "100%", position: "relative" }}
-    >
+  const PresentationName = () => (
+    <>
+      {" "}
       <Typography
         component={motion.h2}
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
         variant="h5"
         gutterBottom
@@ -107,6 +99,18 @@ const RecordingCapture: React.FC<RecordingCaptureProps> = ({
       >
         {presentationName}
       </Typography>
+    </>
+  );
+  return (
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      sx={{ width: "100%", position: "relative" }}
+    >
+    
+      <PresentationName />
 
       <CameraPreview
         stream={stream}
