@@ -1,5 +1,4 @@
-
-import  { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Box,
@@ -76,7 +75,12 @@ const RecordingFlow = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30, duration: 0.4 }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+          duration: 0.4,
+        }}
       >
         <Paper sx={paperStyles(theme, activeStep)} elevation={2}>
           {activeStep === 0 && (
@@ -102,16 +106,19 @@ const RecordingFlow = () => {
       </motion.div>
     </AnimatePresence>
   );
-
-  return (
+  const Wrapper = ({ children }) => (
     <Box sx={outerBoxStyles}>
-      <Container maxWidth="md">
-        <Header />
-        <StepperNav />
-        <StepContent />
-      </Container>
+      <Container maxWidth="md">{children}</Container>
     </Box>
   );
-};
+  
+  return (
+    <Wrapper>
+      <Header />
+      <StepperNav />
+      <StepContent />
+    </Wrapper>
+  );
+};  
 
 export default RecordingFlow;

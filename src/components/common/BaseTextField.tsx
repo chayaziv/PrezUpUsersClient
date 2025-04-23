@@ -16,8 +16,13 @@ const BaseTextField: React.FC<BaseTextFieldProps> = ({
       error={error}
       helperText={error ? errorText : props.helperText}
       fullWidth
-     
       margin="normal"
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          borderRadius: 1.5,
+          
+        },
+      }}
     />
   );
 };
