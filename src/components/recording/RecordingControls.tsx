@@ -12,7 +12,64 @@ import {
   startButtonStyles,
   pauseResumeButtonStyles,
   stopButtonStyles,
-} from "../../styles/recordingControlsStyle";
+} from "@/styles/recordingControlsStyle";
+const BackButton = ({ onBack, disabled }) => (
+  <Button
+    startIcon={<ArrowBackIcon />}
+    onClick={onBack}
+    disabled={disabled}
+    variant="outlined"
+    sx={backButtonStyles}
+  >
+    Back
+  </Button>
+);
+
+const StartButton = ({ onClick, disabled }) => (
+  <Button
+    component={motion.button}
+    whileHover={{ scale: 1.03 }}
+    whileTap={{ scale: 0.97 }}
+    variant="contained"
+    color="primary"
+    startIcon={<FiberManualRecordIcon />}
+    onClick={onClick}
+    disabled={disabled}
+    sx={startButtonStyles}
+  >
+    Start Recording
+  </Button>
+);
+
+const PauseResumeButton = ({ isPaused, onClick, theme }) => (
+  <Button
+    component={motion.button}
+    whileHover={{ scale: 1.03 }}
+    whileTap={{ scale: 0.97 }}
+    variant="outlined"
+    color={isPaused ? "success" : "primary"}
+    onClick={onClick}
+    startIcon={isPaused ? <PlayArrowIcon /> : <PauseIcon />}
+    sx={pauseResumeButtonStyles(isPaused, theme)}
+  >
+    {isPaused ? "Resume" : "Pause"}
+  </Button>
+);
+
+const StopButton = ({ onClick }) => (
+  <Button
+    component={motion.button}
+    whileHover={{ scale: 1.03 }}
+    whileTap={{ scale: 0.97 }}
+    variant="contained"
+    color="error"
+    startIcon={<StopIcon />}
+    onClick={onClick}
+    sx={stopButtonStyles}
+  >
+    Stop Recording
+  </Button>
+);
 
 interface RecordingControlsProps {
   isRecording: boolean;
@@ -46,57 +103,18 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
       justifyContent="space-between"
       alignItems="center"
     >
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={onBack}
-        disabled={isRecording}
-        variant="outlined"
-        sx={backButtonStyles}
-      >
-        Back
-      </Button>
-
+      <BackButton onBack={onBack} disabled={isRecording} />
       <Box sx={{ display: "flex", gap: 2 }}>
         {!isRecording ? (
-          <Button
-            component={motion.button}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            variant="contained"
-            color="primary"
-            startIcon={<FiberManualRecordIcon />}
-            onClick={onStartCountdown}
-            disabled={!!countdown}
-            sx={startButtonStyles}
-          >
-            Start Recording
-          </Button>
+          <StartButton onClick={onStartCountdown} disabled={!!countdown} />
         ) : (
           <>
-            <Button
-              component={motion.button}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              variant="outlined"
-              color={isPaused ? "success" : "primary"}
+            <PauseResumeButton
+              isPaused={isPaused}
               onClick={onPauseResume}
-              startIcon={isPaused ? <PlayArrowIcon /> : <PauseIcon />}
-              sx={pauseResumeButtonStyles(isPaused, theme)}
-            >
-              {isPaused ? "Resume" : "Pause"}
-            </Button>
-            <Button
-              component={motion.button}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              variant="contained"
-              color="error"
-              startIcon={<StopIcon />}
-              onClick={onStop}
-              sx={stopButtonStyles}
-            >
-              Stop Recording
-            </Button>
+              theme={theme}
+            />
+            <StopButton onClick={onStop} />
           </>
         )}
       </Box>

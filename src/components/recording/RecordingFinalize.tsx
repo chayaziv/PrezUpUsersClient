@@ -16,12 +16,12 @@ import VideoFileIcon from "@mui/icons-material/VideoFile";
 import { motion } from "framer-motion";
 import PreviewPlayer from "./preview/PreviewPlayer";
 import PresentationDetails from "./preview/PresentationDetails";
-import ActionControls from "./preview/ActionControls";
 import UploadProgress from "./upload/UploadProgress";
 import UploadComplete from "./upload/UploadComplete";
 import ResetButton from "./preview/ResetButton";
 import { TagType } from "@/types/tag";
 import { RecordingData } from "@/types/recording";
+import ActionControls from "./preview/ActionControls";
 
 interface RecordingFinalizeProps {
   recordingData: RecordingData;
@@ -158,63 +158,12 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
       animate={{ opacity: 1 }}
       sx={{ width: "100%" }}
     >
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <SnackbarAlert
+        snackbar={snackbar}
+        handleCloseSnackbar={handleCloseSnackbar}
+      />
 
-      <Box
-        component={motion.div}
-        initial={{ y: -20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        sx={{ display: "flex", alignItems: "center", mb: 3 }}
-      >
-        <VideoFileIcon
-          color="primary"
-          sx={{
-            mr: 1.5,
-            fontSize: 28,
-            filter: "drop-shadow(0 0 10px rgba(0, 131, 143, 0.5))",
-          }}
-        />
-        <Typography
-          variant="h5"
-          gutterBottom
-          sx={{
-            color: "primary.main",
-            fontWeight: "bold",
-            background: "linear-gradient(to right, #00838F, #4FB3BF)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          Review Your Presentation
-        </Typography>
-      </Box>
-
-      <Typography
-        component={motion.p}
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        variant="body1"
-        gutterBottom
-        sx={{ mb: 3, color: "text.secondary" }}
-      >
-        Your recording is ready! Review it before uploading to the server.
-      </Typography>
+      <Header />
 
       <PreviewPlayer videoUrl={videoUrl} />
 
@@ -233,50 +182,7 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
           tags={recordingData.tags}
           fileSize={videoSize}
         />
-
-        <Paper
-          elevation={1}
-          sx={{
-            p: 3,
-            borderRadius: 2,
-            background:
-              "linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, rgba(170, 215, 215, 0.2) 100%)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(0, 131, 143, 0.1)",
-            boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05)",
-            flex: 1,
-            transition: "all 0.3s ease",
-            "&:hover": {
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-              transform: "translateY(-5px)",
-            },
-          }}
-        >
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{
-              color: "primary.main",
-              fontWeight: 600,
-              mb: 2,
-              textShadow: "0 0 10px rgba(0, 131, 143, 0.3)",
-            }}
-          >
-            Actions
-          </Typography>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            </motion.div>
-          )}
-
+        <Actions error={error}>
           <UploadProgress
             isUploading={isUploading}
             uploadProgress={uploadProgress}
@@ -296,7 +202,7 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
               copySuccess={copySuccess}
             />
           )}
-        </Paper>
+        </Actions>
       </Stack>
 
       <Divider
@@ -313,3 +219,114 @@ const RecordingFinalize: React.FC<RecordingFinalizeProps> = ({
 };
 
 export default RecordingFinalize;
+
+const Header = () => (
+  <>
+    <Box
+      component={motion.div}
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.1 }}
+      sx={{ display: "flex", alignItems: "center", mb: 3 }}
+    >
+      <VideoFileIcon
+        color="primary"
+        sx={{
+          mr: 1.5,
+          fontSize: 28,
+          filter: "drop-shadow(0 0 10px rgba(0, 131, 143, 0.5))",
+        }}
+      />
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          color: "primary.main",
+          fontWeight: "bold",
+          background: "linear-gradient(to right, #00838F, #4FB3BF)",
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
+      >
+        Review Your Presentation
+      </Typography>
+    </Box>
+
+    <Typography
+      component={motion.p}
+      initial={{ y: 10, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ delay: 0.2 }}
+      variant="body1"
+      gutterBottom
+      sx={{ mb: 3, color: "text.secondary" }}
+    >
+      Your recording is ready! Review it before uploading to the server.
+    </Typography>
+  </>
+);
+
+const Actions = ({ error, children }) => (
+  <Paper
+    elevation={1}
+    sx={{
+      p: 3,
+      borderRadius: 2,
+      background:
+        "linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, rgba(170, 215, 215, 0.2) 100%)",
+      backdropFilter: "blur(10px)",
+      border: "1px solid rgba(0, 131, 143, 0.1)",
+      boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05)",
+      flex: 1,
+      transition: "all 0.3s ease",
+      "&:hover": {
+        boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+        transform: "translateY(-5px)",
+      },
+    }}
+  >
+    <Typography
+      variant="h6"
+      gutterBottom
+      sx={{
+        color: "primary.main",
+        fontWeight: 600,
+        mb: 2,
+        textShadow: "0 0 10px rgba(0, 131, 143, 0.3)",
+      }}
+    >
+      Actions
+    </Typography>
+
+    {error && (
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: "auto" }}
+        exit={{ opacity: 0, height: 0 }}
+      >
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      </motion.div>
+    )}
+    {children}
+  </Paper>
+);
+
+const SnackbarAlert = ({ snackbar, handleCloseSnackbar }) => (
+  <Snackbar
+    open={snackbar.open}
+    autoHideDuration={6000}
+    onClose={handleCloseSnackbar}
+    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+  >
+    <Alert
+      onClose={handleCloseSnackbar}
+      severity={snackbar.severity}
+      sx={{ width: "100%" }}
+    >
+      {snackbar.message}
+    </Alert>
+  </Snackbar>
+);

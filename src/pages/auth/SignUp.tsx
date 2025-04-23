@@ -20,7 +20,7 @@ const SignUp = () => {
 
   return (
     <AuthForm
-    isSignIn={false}
+      isSignIn={false}
       title="Sign Up"
       icon={<PersonAddIcon fontSize="large" />}
       submitLabel="Sign Up"

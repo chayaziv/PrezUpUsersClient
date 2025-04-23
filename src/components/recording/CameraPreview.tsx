@@ -1,3 +1,6 @@
+///VV
+
+
 import React, { useRef, useEffect } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,6 +15,50 @@ import {
   recordingTimeTextStyles,
 } from "../../styles/cameraPreviewStyle";
 
+const CountdownAnimation = ({ countdown }: { countdown: number }) => (
+  <AnimatePresence>
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 1.2 }}
+      sx={countdownOverlayStyles}
+    >
+      <Typography variant="h1" sx={countdownTextStyles}>
+        {countdown}
+      </Typography>
+    </Box>
+  </AnimatePresence>
+);
+const Indicator = ({ recordingTime, isPaused, formatTime }) => (
+  <AnimatePresence>
+    <Box
+      component={motion.div}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.4 }}
+      sx={recordingIndicatorStyles}
+    >
+      <FiberManualRecordIcon color="error" sx={recordingIconStyles(isPaused)} />
+      <Typography variant="body2" sx={recordingTimeTextStyles}>
+        {formatTime(recordingTime)}
+      </Typography>
+    </Box>{" "}
+  </AnimatePresence>
+);
+const Wrapper = ({ children, isRecording }) => (
+  <Paper
+    component={motion.div}
+    initial={{ y: 20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ delay: 0.2 }}
+    elevation={3}
+    sx={paperStyles(isRecording)}
+  >
+    {children}
+  </Paper>
+);
 interface CameraPreviewProps {
   stream: MediaStream | null;
   isRecording: boolean;
@@ -20,7 +67,6 @@ interface CameraPreviewProps {
   countdown: number | null;
   formatTime: (seconds: number) => string;
 }
-
 const CameraPreview: React.FC<CameraPreviewProps> = ({
   stream,
   isRecording,
@@ -37,86 +83,20 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({
     }
   }, [stream]);
 
-  const CountdownAnimation = ({ countdown }: { countdown: number }) => (
-    <Box
-      component={motion.div}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 1.2 }}
-      sx={countdownOverlayStyles}
-    >
-      <Typography variant="h1" sx={countdownTextStyles}>
-        {countdown}
-      </Typography>
-    </Box>
-    
-  );
-  const Indicator = ({ recordingTime, isPaused, formatTime }) => (
-    <Box
-      component={motion.div}
-      key={`recording-${recordingTime}`}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.4 }}
-      sx={recordingIndicatorStyles}
-    >
-      <FiberManualRecordIcon color="error" sx={recordingIconStyles(isPaused)} />
-      <Typography variant="body2" sx={recordingTimeTextStyles}>
-        {formatTime(recordingTime)}
-      </Typography>
-    </Box>
-  );
   return (
-    <Paper
-      component={motion.div}
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.2 }}
-      elevation={3}
-      sx={paperStyles(isRecording)}
-    >
+    <Wrapper isRecording={isRecording}>
       <video ref={videoRef} autoPlay muted playsInline style={videoStyles} />
 
-      {/* <AnimatePresence>
-        {countdown !== null && <CountdownAnimation countdown={countdown} />}
-      </AnimatePresence>  */}
-      <AnimatePresence>
-        {countdown !== null && (
-          <Box
-            component={motion.div}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.2 }}
-            sx={countdownOverlayStyles}
-          >
-            <Typography variant="h1" sx={countdownTextStyles}>
-              {countdown}
-            </Typography>
-          </Box>
-        )}
-      </AnimatePresence>
+      {countdown !== null && <CountdownAnimation countdown={countdown} />}
 
-      <AnimatePresence>
-        {isRecording && (
-          <Box
-            component={motion.div}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            sx={recordingIndicatorStyles}
-          >
-            <FiberManualRecordIcon
-              color="error"
-              sx={recordingIconStyles(isPaused)}
-            />
-            <Typography variant="body2" sx={recordingTimeTextStyles}>
-              {formatTime(recordingTime)}
-            </Typography>
-          </Box>
-        )}
-      </AnimatePresence>
-    </Paper>
+      {isRecording && (
+        <Indicator
+          recordingTime={recordingTime}
+          isPaused={isPaused}
+          formatTime={formatTime}
+        />
+      )}
+    </Wrapper>
   );
 };
 
