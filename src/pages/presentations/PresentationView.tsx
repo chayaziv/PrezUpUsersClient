@@ -39,7 +39,7 @@ import { PresentationType } from "@/types/presentation";
 import { fetchPublicPresentations } from "../../store/slices/PublicPresentationsSlice";
 import PreviewPlayer from "@/components/recording/preview/PreviewPlayer";
 
-const PresentationDetail = () => {
+const PresentationView = () => {
   const theme = useTheme();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -404,7 +404,7 @@ const PresentationDetail = () => {
 
                       <LinearProgress
                         variant="determinate"
-                        value={metric.value*10}
+                        value={metric.value * 10}
                         sx={{
                           height: 8,
                           borderRadius: 4,
@@ -432,4 +432,4 @@ const PresentationDetail = () => {
   );
 };
 
-export default PresentationDetail;
+export default PresentationView;

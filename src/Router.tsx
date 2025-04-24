@@ -11,7 +11,7 @@ import UserProfile from "./pages/UserProfile";
 import Notifications from "./pages/Notifications";
 import CustomerChat from "./pages/CustomerChat";
 import NotFound from "./pages/NotFound";
-import PresentationDetail from "./pages/presentations/PresentationDetail";
+import PresentationDetail from "./pages/presentations/PresentationView";
 
 export const router = createBrowserRouter([
   {

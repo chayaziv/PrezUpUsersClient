@@ -20,7 +20,155 @@ import VideoFileIcon from "@mui/icons-material/VideoFile";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { TagType } from "@/types/tag";
 
+import {
+  paperWrapperStyle,
+  titleStyle,
+  listItemTextPrimary,
+  chipTagStyle,
+  tagsWrapperStyle,
+  secondaryTextStyle,
+  dividerStyle,
+} from "../../../styles/presentationDetailsStyle";
 
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <Paper elevation={1} sx={paperWrapperStyle}>
+    {children}
+  </Paper>
+);
+
+const Title = () => (
+  <Typography variant="h6" gutterBottom sx={titleStyle}>
+    <VideoFileIcon fontSize="small" />
+    Presentation Details
+  </Typography>
+);
+
+const InfoListItem = ({ icon, label, content, delay = 0 }) => (
+  <ListItem
+    component={motion.li}
+    initial={{ x: -20, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    transition={{ delay }}
+    sx={{ px: 0 }}
+  >
+    <ListItemIcon sx={{ minWidth: 40 }}>{icon}</ListItemIcon>
+    <ListItemText
+      primary={
+        <Typography variant="body1" sx={listItemTextPrimary}>
+          {label}
+        </Typography>
+      }
+      secondary={content}
+    />
+  </ListItem>
+);
+
+const DividerSection = () => <Divider component="li" sx={dividerStyle} />;
+
+const VisibilityItem = ({ isPublic }) => (
+  <InfoListItem
+    icon={
+      isPublic ? <PublicIcon color="primary" /> : <LockIcon color="secondary" />
+    }
+    label="Visibility"
+    content={
+      <Tooltip
+        title={
+          isPublic
+            ? "Anyone can view this presentation"
+            : "Only you can view this presentation"
+        }
+      >
+        <Chip
+          label={isPublic ? "Public" : "Private"}
+          size="small"
+          color={isPublic ? "primary" : "default"}
+          variant="outlined"
+          sx={{ mt: 0.5 }}
+        />
+      </Tooltip>
+    }
+  />
+);
+
+const TagsItem = ({ tags }: { tags: TagType[] }) => {
+  const content =
+    tags.length > 0 ? (
+      <Box sx={tagsWrapperStyle}>
+        {tags.map((tag) => (
+          <Chip
+            key={tag.id}
+            label={tag.name}
+            size="small"
+            color="primary"
+            variant="outlined"
+            sx={chipTagStyle}
+          />
+        ))}
+      </Box>
+    ) : (
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={secondaryTextStyle}
+      >
+        No tags
+      </Typography>
+    );
+
+  return (
+    <InfoListItem
+      icon={<LabelIcon color="primary" />}
+      label="Tags"
+      content={content}
+      delay={0.2}
+    />
+  );
+};
+
+const FileSizeItem = ({ fileSize }: { fileSize: number }) => (
+  <InfoListItem
+    icon={<VideoFileIcon color="primary" />}
+    label="File Size"
+    content={
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={secondaryTextStyle}
+      >
+        {fileSize.toFixed(2)} MB
+      </Typography>
+    }
+    delay={0.3}
+  />
+);
+
+const CreatedDateItem = () => {
+  const dateStr = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return (
+    <InfoListItem
+      icon={<CalendarTodayIcon color="primary" />}
+      label="Created"
+      content={
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={secondaryTextStyle}
+        >
+          {dateStr}
+        </Typography>
+      }
+      delay={0.4}
+    />
+  );
+};
 
 interface PresentationDetailsProps {
   name: string;
@@ -36,193 +184,18 @@ const PresentationDetails: React.FC<PresentationDetailsProps> = ({
   fileSize,
 }) => {
   return (
-    <Paper
-      elevation={1}
-      sx={{
-        p: 3,
-        borderRadius: 3,
-        background: "white",
-        border: "1px solid",
-        borderColor: alpha("#3A36E0", 0.1),
-        flex: 1,
-        transition: "all 0.3s ease",
-        "&:hover": {
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.08)",
-          transform: "translateY(-5px)",
-        },
-      }}
-    >
-      <Typography
-        variant="h6"
-        gutterBottom
-        sx={{
-          color: "primary.main",
-          fontWeight: 600,
-          mb: 2,
-          display: "flex",
-          alignItems: "center",
-          gap: 1,
-        }}
-      >
-        <VideoFileIcon fontSize="small" />
-        Presentation Details
-      </Typography>
-
+    <Wrapper>
+      <Title />
       <List dense>
-        <ListItem
-          component={motion.li}
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          sx={{ px: 0 }}
-        >
-          <ListItemIcon sx={{ minWidth: 40 }}>
-            {isPublic ? (
-              <PublicIcon color="primary" />
-            ) : (
-              <LockIcon color="secondary" />
-            )}
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                Visibility
-              </Typography>
-            }
-            secondary={
-              <Tooltip
-                title={
-                  isPublic
-                    ? "Anyone can view this presentation"
-                    : "Only you can view this presentation"
-                }
-              >
-                <Chip
-                  label={isPublic ? "Public" : "Private"}
-                  size="small"
-                  color={isPublic ? "primary" : "default"}
-                  variant="outlined"
-                  sx={{ mt: 0.5 }}
-                />
-              </Tooltip>
-            }
-          />
-        </ListItem>
-
-        <Divider component="li" sx={{ my: 1.5 }} />
-
-        <ListItem
-          component={motion.li}
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          sx={{ px: 0 }}
-        >
-          <ListItemIcon sx={{ minWidth: 40 }}>
-            <LabelIcon color="primary" />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                Tags
-              </Typography>
-            }
-            secondary={
-              <Box
-                sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mt: 0.5 }}
-              >
-                {tags.length > 0 ? (
-                  tags.map((tag) => (
-                    <Chip
-                      key={tag.id}
-                      label={tag.name}
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                      sx={{
-                        borderRadius: 2,
-                        background: alpha("#3A36E0", 0.05),
-                        borderColor: alpha("#3A36E0", 0.3),
-                      }}
-                    />
-                  ))
-                ) : (
-                  <Typography variant="body2" color="text.secondary">
-                    No tags
-                  </Typography>
-                )}
-              </Box>
-            }
-          />
-        </ListItem>
-
-        <Divider component="li" sx={{ my: 1.5 }} />
-
-        <ListItem
-          component={motion.li}
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          sx={{ px: 0 }}
-        >
-          <ListItemIcon sx={{ minWidth: 40 }}>
-            <VideoFileIcon color="primary" />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                File Size
-              </Typography>
-            }
-            secondary={
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 0.5 }}
-              >
-                {fileSize.toFixed(2)} MB
-              </Typography>
-            }
-          />
-        </ListItem>
-
-        <Divider component="li" sx={{ my: 1.5 }} />
-
-        <ListItem
-          component={motion.li}
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          sx={{ px: 0 }}
-        >
-          <ListItemIcon sx={{ minWidth: 40 }}>
-            <CalendarTodayIcon color="primary" />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                Created
-              </Typography>
-            }
-            secondary={
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 0.5 }}
-              >
-                {new Date().toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Typography>
-            }
-          />
-        </ListItem>
+        <VisibilityItem isPublic={isPublic} />
+        <DividerSection />
+        <TagsItem tags={tags} />
+        <DividerSection />
+        <FileSizeItem fileSize={fileSize} />
+        <DividerSection />
+        <CreatedDateItem />
       </List>
-    </Paper>
+    </Wrapper>
   );
 };
 
