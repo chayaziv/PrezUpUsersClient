@@ -14,14 +14,14 @@ import {
 } from "@mui/material";
 import VideoFileIcon from "@mui/icons-material/VideoFile";
 import { motion } from "framer-motion";
-import PreviewPlayer from "./step3-finalize/PreviewPlayer";
-import PresentationDetails from "./step3-finalize/PresentationDetails";
-import UploadProgress from "./step3-finalize/UploadProgress";
-import UploadComplete from "./step3-finalize/UploadComplete";
-import ResetButton from "./step3-finalize/ResetButton";
+import PreviewPlayer from "./finalize/PreviewPlayer";
+import PresentationDetails from "./finalize/PresentationDetails";
+import UploadProgress from "./finalize/UploadProgress";
+import UploadComplete from "./finalize/UploadComplete";
+import ResetButton from "./finalize/ResetButton";
 import { TagType } from "@/types/tag";
 import { RecordingData } from "@/types/recording";
-import ActionControls from "./step3-finalize/ActionControls";
+import ActionControls from "./finalize/ActionControls";
 
 const Header = () => (
   <>

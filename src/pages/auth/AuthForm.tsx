@@ -173,7 +173,6 @@ const DividerWithText = () => (
   </Divider>
 );
 
-
 const LinkToPage = ({ linkTo, linkText }: any) => (
   <Grid container justifyContent="flex-end">
     <Grid item>

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SettingsIcon from "@mui/icons-material/Settings";
-import TagSelector from "./step1-setup/TagSelector";
+import TagSelector from "./setup/TagSelector";
 import { RecordingData } from "@/types/recording";
 import { TagType } from "@/types/tag";
 import VisibilityIcon from "@mui/icons-material/Visibility";

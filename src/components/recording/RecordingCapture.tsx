@@ -11,10 +11,10 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
-import CameraPreview from "./step2-capture/CameraPreview";
-import RecordingProgress from "./step2-capture/RecordingProgress";
-import RecordingControls from "./step2-capture/RecordingControls";
-import DeviceControls from "./step2-capture/DeviceControls";
+import CameraPreview from "./capture/CameraPreview";
+import RecordingProgress from "./capture/RecordingProgress";
+import RecordingControls from "./capture/RecordingControls";
+import DeviceControls from "./capture/DeviceControls";
 import { useMediaRecorder } from "@/hooks/useMediaRecorder";
 import {
   containerStyle,
