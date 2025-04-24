@@ -1,32 +1,138 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  Box,
+  Divider,
   Drawer,
-  List,
+  IconButton,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider,
+  Tooltip,
   useMediaQuery,
   useTheme,
-  IconButton,
-  Tooltip,
-  Box,
+  List,
 } from "@mui/material";
-import {
-  Home as HomeIcon,
-  Info as InfoIcon,
-  VideoLibrary as VideoLibraryIcon,
-  Person as PersonIcon,
-  BarChart as BarChartIcon,
-  VideoCall as VideoCallIcon,
-  Videocam as VideocamIcon,
-  Dashboard as DashboardIcon,
-  Chat as ChatIcon,
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-} from "@mui/icons-material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Home, Info, Video, BarChart, User } from "lucide-react";
+import { Chat, ChevronLeft, ChevronRight, Dashboard } from "@mui/icons-material";
+
+import { drawerSx, listItemButtonSx } from "@/styles/sideNavigation";
+
+const SideNavigationDrawer = ({
+  open,
+  isMobile,
+  drawerWidth,
+  isCollapsed,
+  toggleCollapse,
+  handleDrawerToggle,
+  children,
+}) => {
+  const theme = useTheme();
+
+  return (
+    <Drawer
+      variant={isMobile ? "temporary" : "persistent"}
+      open={isMobile ? open : true}
+      onClose={isMobile ? handleDrawerToggle : undefined}
+      sx={drawerSx(isCollapsed, drawerWidth, theme)}
+    >
+      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
+        <Tooltip title={isCollapsed ? "Expand menu" : "Collapse menu"}>
+          <IconButton onClick={toggleCollapse} size="small">
+            {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+          </IconButton>
+        </Tooltip>
+      </Box>
+      {children}
+    </Drawer>
+  );
+};
+
+const SideNavigationList = ({
+  items,
+  location,
+  navigate,
+  isMobile,
+  isCollapsed,
+  handleDrawerToggle,
+
+  authenticatedItems,
+  isAuthenticated,
+}) => (
+  <>
+    <List sx={{ mt: 1 }}>
+      {items.map((item) => (
+        <SideNavigationItem
+          key={item.text}
+          item={item}
+          location={location}
+          navigate={navigate}
+          isMobile={isMobile}
+          isCollapsed={isCollapsed}
+          handleDrawerToggle={handleDrawerToggle}
+        />
+      ))}
+      {isAuthenticated && <Divider sx={{ my: 2 }} />}
+      {isAuthenticated &&
+        authenticatedItems.map((item) => (
+          <SideNavigationItem
+            key={item.text}
+            item={item}
+            location={location}
+            navigate={navigate}
+            isMobile={isMobile}
+            isCollapsed={isCollapsed}
+            handleDrawerToggle={handleDrawerToggle}
+          />
+        ))}
+    </List>
+  </>
+);
+
+const SideNavigationItem = ({
+  item,
+  location,
+  navigate,
+  isMobile,
+  isCollapsed,
+  handleDrawerToggle,
+}) => {
+  const selected = location.pathname === item.path;
+  const IconComponent = item.icon;
+
+  return (
+    <ListItem disablePadding>
+      <ListItemButton
+        selected={selected}
+        onClick={() => {
+          navigate(item.path);
+          if (isMobile) handleDrawerToggle();
+        }}
+        sx={listItemButtonSx}
+      >
+        <ListItemIcon
+          sx={{
+            color: selected ? "primary.main" : "text.secondary",
+            minWidth: 0,
+            mr: isCollapsed ? 0 : 3,
+          }}
+        >
+          {IconComponent && <IconComponent size={20} />}
+        </ListItemIcon>
+        {!isCollapsed && (
+          <ListItemText
+            primary={item.text}
+            primaryTypographyProps={{
+              fontSize: "0.95rem",
+              fontWeight: selected ? "medium" : "normal",
+            }}
+          />
+        )}
+      </ListItemButton>
+    </ListItem>
+  );
+};
 
 interface SideNavigationProps {
   open: boolean;
@@ -48,174 +154,39 @@ const SideNavigation = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { text: "Home", icon: <HomeIcon />, path: "/" },
-    { text: "About", icon: <InfoIcon />, path: "/about" },
-   
-    { text: "Customer Support", icon: <ChatIcon />, path: "/chat" },
+    { text: "Home", icon: Home, path: "/" },
+    { text: "About", icon: Info, path: "/about" },
+    { text: "Customer Support", icon: Chat, path: "/chat" },
   ];
 
   const authenticatedMenuItems = [
-    { text: "Record Presentation", icon: <VideocamIcon />, path: "/record" },
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
-    {
-      text: "All Presentations",
-      icon: <VideoCallIcon />,
-      path: "/presentations",
-    },
-    { text: "Comparisons", icon: <BarChartIcon />, path: "/comparisons" },
-    { text: "Profile", icon: <PersonIcon />, path: "/profile" },
+    { text: "Record Presentation", icon: Video, path: "/record" },
+    { text: "Dashboard", icon: Dashboard, path: "/dashboard" },
+    { text: "All Presentations", icon: Video, path: "/presentations" },
+    { text: "Comparisons", icon: BarChart, path: "/comparisons" },
+    { text: "Profile", icon: User, path: "/profile" },
   ];
 
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   return (
-    <Drawer
-      variant={isMobile ? "temporary" : "persistent"}
-      open={isMobile ? open : true}
-      onClose={isMobile ? handleDrawerToggle : undefined}
-      sx={{
-        width: isCollapsed ? 64 : drawerWidth,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: isCollapsed ? 64 : drawerWidth,
-          boxSizing: "border-box",
-          borderRight: "1px solid rgba(0, 0, 0, 0.08)",
-          boxShadow: "none",
-          mt: "64px",
-          background: "#FAFAFA",
-          transition: theme.transitions.create("width", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        },
-      }}
+    <SideNavigationDrawer
+      isMobile={isMobile}
+      open={open}
+      drawerWidth={drawerWidth}
+      isCollapsed={isCollapsed}
+      toggleCollapse={() => setIsCollapsed(!isCollapsed)}
+      handleDrawerToggle={handleDrawerToggle}
     >
-      <Box sx={{ display: "flex", justifyContent: "flex-end", p: 1 }}>
-        <Tooltip title={isCollapsed ? "Expand menu" : "Collapse menu"}>
-          <IconButton onClick={toggleCollapse} size="small">
-            {isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </Tooltip>
-      </Box>
-      <List sx={{ mt: 1 }}>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton
-              selected={location.pathname === item.path}
-              onClick={() => {
-                navigate(item.path);
-                if (isMobile) handleDrawerToggle();
-              }}
-              sx={{
-                borderRadius: "0 20px 20px 0",
-                mr: 1,
-                mb: 0.5,
-                minHeight: 48,
-                px: 2.5,
-                "&.Mui-selected": {
-                  background: "rgba(75, 124, 133, 0.08)",
-                  color: "primary.main",
-                  "&:hover": {
-                    background: "rgba(75, 124, 133, 0.12)",
-                  },
-                  "& .MuiListItemIcon-root": {
-                    color: "primary.main",
-                  },
-                },
-                "&:hover": {
-                  background: "rgba(0, 0, 0, 0.04)",
-                },
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  color:
-                    location.pathname === item.path
-                      ? "primary.main"
-                      : "text.secondary",
-                  minWidth: 0,
-                  mr: isCollapsed ? 0 : 3,
-                }}
-              >
-                {item.icon}
-              </ListItemIcon>
-              {!isCollapsed && (
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    fontSize: "0.95rem",
-                    fontWeight:
-                      location.pathname === item.path ? "medium" : "normal",
-                  }}
-                />
-              )}
-            </ListItemButton>
-          </ListItem>
-        ))}
-
-        {isAuthenticated && (
-          <>
-            <Divider sx={{ my: 2 }} />
-            {authenticatedMenuItems.map((item) => (
-              <ListItem key={item.text} disablePadding>
-                <ListItemButton
-                  selected={location.pathname === item.path}
-                  onClick={() => {
-                    navigate(item.path);
-                    if (isMobile) handleDrawerToggle();
-                  }}
-                  sx={{
-                    borderRadius: "0 20px 20px 0",
-                    mr: 1,
-                    mb: 0.5,
-                    minHeight: 48,
-                    px: 2.5,
-                    "&.Mui-selected": {
-                      background: "rgba(75, 124, 133, 0.08)",
-                      color: "primary.main",
-                      "&:hover": {
-                        background: "rgba(75, 124, 133, 0.12)",
-                      },
-                      "& .MuiListItemIcon-root": {
-                        color: "primary.main",
-                      },
-                    },
-                    "&:hover": {
-                      background: "rgba(0, 0, 0, 0.04)",
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      color:
-                        location.pathname === item.path
-                          ? "primary.main"
-                          : "text.secondary",
-                      minWidth: 0,
-                      mr: isCollapsed ? 0 : 3,
-                    }}
-                  >
-                    {item.icon}
-                  </ListItemIcon>
-                  {!isCollapsed && (
-                    <ListItemText
-                      primary={item.text}
-                      primaryTypographyProps={{
-                        fontSize: "0.95rem",
-                        fontWeight:
-                          location.pathname === item.path ? "medium" : "normal",
-                      }}
-                    />
-                  )}
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </>
-        )}
-      </List>
-    </Drawer>
+      <SideNavigationList
+        items={menuItems}
+        authenticatedItems={authenticatedMenuItems}
+        isAuthenticated={isAuthenticated}
+        location={location}
+        navigate={navigate}
+        isMobile={isMobile}
+        isCollapsed={isCollapsed}
+        handleDrawerToggle={handleDrawerToggle}
+      />
+    </SideNavigationDrawer>
   );
 };
 
