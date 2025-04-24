@@ -123,6 +123,23 @@ const FullscreenButton = ({ onClick }) => (
   </IconButton>
 );
 
+const Wrapper = ({ children, setIsControlsVisible }) => (
+  <Paper
+    component={motion.div}
+    initial={{ y: 20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ type: "spring", delay: 0.3, stiffness: 100, damping: 15 }}
+    elevation={2}
+    sx={styledContainer}
+    onMouseEnter={() => setIsControlsVisible(true)}
+    onMouseLeave={() => setIsControlsVisible(false)}
+  >
+    <Box sx={{ position: "relative", width: "100%", bgcolor: "#000" }}>
+      {children}
+    </Box>
+  </Paper>
+);
+
 interface PreviewPlayerProps {
   videoUrl: string;
 }
@@ -156,62 +173,48 @@ const PreviewPlayer: React.FC<PreviewPlayerProps> = ({ videoUrl }) => {
   };
 
   return (
-    <Paper
-      component={motion.div}
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", delay: 0.3, stiffness: 100, damping: 15 }}
-      elevation={2}
-      sx={styledContainer}
-      onMouseEnter={() => setIsControlsVisible(true)}
-      onMouseLeave={() => setIsControlsVisible(false)}
-    >
-      <Box sx={{ position: "relative", width: "100%", bgcolor: "#000" }}>
-        <Video
-          videoRef={videoRef}
-          videoUrl={videoUrl}
-          handleTimeUpdate={handleTimeUpdate}
-          setIsPlaying={setIsPlaying}
-          setIsMuted={setIsMuted}
-          setDuration={setDuration}
+    <Wrapper setIsControlsVisible={setIsControlsVisible}>
+      <Video
+        videoRef={videoRef}
+        videoUrl={videoUrl}
+        handleTimeUpdate={handleTimeUpdate}
+        setIsPlaying={setIsPlaying}
+        setIsMuted={setIsMuted}
+        setDuration={setDuration}
+      />
+
+      {!isPlaying && <PlayOverlay onClick={handlePlayPause} />}
+
+      <ControlsOverlay isVisible={isControlsVisible || !isPlaying}>
+        <SliderSection
+          currentTime={currentTime}
+          duration={duration}
+          onSliderChange={handleSliderChange}
         />
 
-        {!isPlaying && <PlayOverlay onClick={handlePlayPause} />}
+        <ControlsBar>
+          <LeftSide>
+            <PlayPauseButton isPlaying={isPlaying} onClick={handlePlayPause} />
+            <RestartButton onClick={handleRestart} />
+            <TimeDisplay
+              currentTime={currentTime}
+              duration={duration}
+              formatTime={formatTime}
+            />
+          </LeftSide>
 
-        <ControlsOverlay isVisible={isControlsVisible || !isPlaying}>
-          <SliderSection
-            currentTime={currentTime}
-            duration={duration}
-            onSliderChange={handleSliderChange}
-          />
-
-          <ControlsBar>
-            <LeftSide>
-              <PlayPauseButton
-                isPlaying={isPlaying}
-                onClick={handlePlayPause}
-              />
-              <RestartButton onClick={handleRestart} />
-              <TimeDisplay
-                currentTime={currentTime}
-                duration={duration}
-                formatTime={formatTime}
-              />
-            </LeftSide>
-
-            <RightSide>
-              <VolumeControl
-                isMuted={isMuted}
-                volume={volume}
-                onMuteToggle={handleMuteToggle}
-                onVolumeChange={handleVolumeChange}
-              />
-              <FullscreenButton onClick={handleFullscreen} />
-            </RightSide>
-          </ControlsBar>
-        </ControlsOverlay>
-      </Box>
-    </Paper>
+          <RightSide>
+            <VolumeControl
+              isMuted={isMuted}
+              volume={volume}
+              onMuteToggle={handleMuteToggle}
+              onVolumeChange={handleVolumeChange}
+            />
+            <FullscreenButton onClick={handleFullscreen} />
+          </RightSide>
+        </ControlsBar>
+      </ControlsOverlay>
+    </Wrapper>
   );
 };
 

@@ -1,6 +1,5 @@
 ///VV
 
-
 import React, { useRef, useEffect } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,7 +12,7 @@ import {
   recordingIndicatorStyles,
   recordingIconStyles,
   recordingTimeTextStyles,
-} from "../../styles/cameraPreviewStyle";
+} from "../../../styles/cameraPreviewStyle";
 
 const CountdownAnimation = ({ countdown }: { countdown: number }) => (
   <AnimatePresence>

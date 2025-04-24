@@ -1,4 +1,3 @@
-
 //vvvv
 import DescriptionIcon from "@mui/icons-material/Description";
 import React, { useState } from "react";
@@ -13,13 +12,13 @@ import {
 } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import SettingsIcon from "@mui/icons-material/Settings";
-import TagSelector from "./TagSelector";
+import TagSelector from "./step1-setup/TagSelector";
 import { RecordingData } from "@/types/recording";
 import { TagType } from "@/types/tag";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import * as styles from "@/styles/RecordingSetUpStyle";
-import BaseTextField from "../../common/BaseTextField";
+import BaseTextField from "../common/BaseTextField";
 const HeaderSection = () => (
   <>
     <Box sx={styles.headerBox}>

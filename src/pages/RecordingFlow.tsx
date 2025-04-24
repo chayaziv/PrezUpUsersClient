@@ -11,7 +11,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@mui/material/styles";
 
-import RecordingSetup from "@/components/recording/setup/RecordingSetup";
+import RecordingSetup from "@/components/recording/RecordingSetup";
 import RecordingCapture from "@/components/recording/RecordingCapture";
 import RecordingFinalize from "@/components/recording/RecordingFinalize";
 import { RecordingData } from "@/types/recording";

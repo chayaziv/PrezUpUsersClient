@@ -71,6 +71,21 @@ const StopButton = ({ onClick }) => (
   </Button>
 );
 
+const Wrapper = ({ children }) => (
+  <Stack
+    component={motion.div}
+    initial={{ y: 20, opacity: 0 }}
+    animate={{ y: 0, opacity: 1 }}
+    transition={{ delay: 0.5 }}
+    direction="row"
+    spacing={2}
+    justifyContent="space-between"
+    alignItems="center"
+  >
+    {children}
+  </Stack>
+);
+
 interface RecordingControlsProps {
   isRecording: boolean;
   isPaused: boolean;
@@ -93,16 +108,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
   const theme = useTheme();
 
   return (
-    <Stack
-      component={motion.div}
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.5 }}
-      direction="row"
-      spacing={2}
-      justifyContent="space-between"
-      alignItems="center"
-    >
+    <Wrapper>
       <BackButton onBack={onBack} disabled={isRecording} />
       <Box sx={{ display: "flex", gap: 2 }}>
         {!isRecording ? (
@@ -118,7 +124,7 @@ const RecordingControls: React.FC<RecordingControlsProps> = ({
           </>
         )}
       </Box>
-    </Stack>
+    </Wrapper>
   );
 };
 

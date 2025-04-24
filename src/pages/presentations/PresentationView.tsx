@@ -37,7 +37,7 @@ import {
 } from "@mui/icons-material";
 import { PresentationType } from "@/types/presentation";
 import { fetchPublicPresentations } from "../../store/slices/PublicPresentationsSlice";
-import PreviewPlayer from "@/components/recording/preview/PreviewPlayer";
+import PreviewPlayer from "@/components/recording/step3-finalize/PreviewPlayer";
 
 const PresentationView = () => {
   const theme = useTheme();

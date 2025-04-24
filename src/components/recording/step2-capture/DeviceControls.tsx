@@ -10,7 +10,7 @@ import {
   titleStyles,
   iconButtonStyles,
   iconTextStyles,
-} from "../../styles/deviceControlsStyle";
+} from "../../../styles/deviceControlsStyle";
 
 const VideoControl = ({ stream, onClick }) => {
   const isEnabled = !!stream?.getVideoTracks()[0]?.enabled;
