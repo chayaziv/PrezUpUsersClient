@@ -64,17 +64,6 @@ export const addPresentation = createAsyncThunk(
   }
 );
 
-// await API.post("presentation/analyze-audio", formData, {
-//         headers: { "Content-Type": "multipart/form-data" },
-//         onUploadProgress: (progressEvent) => {
-//           if (progressEvent.total) {
-//             const percentCompleted = Math.round(
-//               (progressEvent.loaded * 100) / progressEvent.total
-//             );
-//             setUploadProgress(percentCompleted);
-//           }
-//         },
-//       });
 
 const myPresentationsSlice = createSlice({
   name: "myPresentations",
