@@ -158,7 +158,7 @@ interface UploadCompleteProps {
 
 const UploadComplete = ({
   presentationName,
-}) => {
+}: UploadCompleteProps) => {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleCopyLink = () => {
