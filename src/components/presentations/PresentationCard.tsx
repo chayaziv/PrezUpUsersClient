@@ -73,27 +73,31 @@ const DetailsContent = ({ children }) => (
   <CardContent sx={detailsContentStyles}>{children}</CardContent>
 );
 
-const ViewButton = ({ handleViewDetails }) => (
-  <CardActions sx={viewButtonStyles}>
+const FooterButtons = ({ onViewDetails, extraAction }) => (
+  <CardActions sx={viewButtonStyles(!!extraAction)}>
     <Button
       startIcon={<VisibilityIcon />}
       size="small"
-      onClick={handleViewDetails}
+      onClick={onViewDetails}
       sx={{ color: "primary.main" }}
     >
       View Details
     </Button>
+    {extraAction}
   </CardActions>
 );
-
 interface PresentationCardProps {
   presentation: PresentationType;
   formatDate: (dateString: string) => string;
+  visibility?: React.ReactNode;
+  deleteButton?: React.ReactNode;
 }
 
 const PresentationCard = ({
   presentation,
   formatDate,
+  visibility,
+  deleteButton,
 }: PresentationCardProps) => {
   const navigate = useNavigate();
 
@@ -109,8 +113,12 @@ const PresentationCard = ({
         <Score score={presentation.score} />
         <Date date={presentation.createdAt} formatDate={formatDate} />
         <Tags tags={presentation.tags} />
+        {visibility}
       </DetailsContent>
-      <ViewButton handleViewDetails={handleViewDetails} />
+      <FooterButtons
+        onViewDetails={handleViewDetails}
+        extraAction={deleteButton}
+      />
     </Card>
   );
 };

@@ -64,9 +64,8 @@ export const detailsContentStyles: SxProps<Theme> = {
   pt: 2,
   px: 2.5,
 };
-
-export const viewButtonStyles: SxProps<Theme> = {
-  justifyContent: "flex-end",
-  px: 2,
-  pb: 1.5,
-};
+export const viewButtonStyles = (extraAction: boolean): SxProps<Theme> => ({
+    justifyContent: extraAction ? "space-between" : "flex-end",
+    px: 2,
+    pb: 1.5,
+  });

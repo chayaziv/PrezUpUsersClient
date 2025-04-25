@@ -1,9 +1,9 @@
 // src/utils/format.ts
 
 export const getProgressColor = (value: number): string => {
-    if (value >= 9) return "#4caf50"; // ירוק
-    if (value >= 5) return "#ff9800"; // כתום
-    return "#f44336"; // אדום
+    if (value >= 9) return "rgb(92, 169, 92)"; // ירוק
+    if (value >= 5) return "rgb(172, 158, 84)"
+    return "rgb(182, 117, 117)"; // אדום
   };
   
 export  const formatTime = (time: number) => {

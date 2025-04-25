@@ -1,23 +1,44 @@
 import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Rating,
-  Chip,
-  CardActions,
   IconButton,
   Switch,
+  Typography,
   FormControlLabel,
   Tooltip,
   Stack,
-  Button,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import { PresentationType } from "@/types/presentation";
-import { useNavigate } from "react-router-dom";
+import PresentationCard from "@/components/presentations/PresentationCard";
+
+const Visibility = ({ isPublic, id, onTogglePublic }) => (
+  <FormControlLabel
+    control={
+      <Switch
+        checked={isPublic}
+        onChange={() => onTogglePublic(id)}
+        color="primary"
+        size="small"
+      />
+    }
+    label={
+      <Typography variant="body2" color="text.secondary">
+        {isPublic ? "Public" : "Private"}
+      </Typography>
+    }
+  />
+);
+
+const DeleteButton = ({ onDeleteClick, id }) => (
+  <Tooltip title="Delete presentation">
+    <IconButton
+      size="small"
+      onClick={() => onDeleteClick(id)}
+      sx={{ color: "error.main" }}
+    >
+      <DeleteIcon fontSize="small" />
+    </IconButton>
+  </Tooltip>
+);
 
 interface UserPresentationCardProps {
   presentation: PresentationType;
@@ -32,134 +53,21 @@ const UserPresentationCard = ({
   onDeleteClick,
   onTogglePublic,
 }: UserPresentationCardProps) => {
-  const navigate = useNavigate();
-
-  const handleViewDetails = () => {
-    navigate(`/presentations/${presentation.id}`);
-  };
-
   return (
-    <Card
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 2,
-        overflow: "hidden",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-        transition: "transform 0.2s, box-shadow 0.2s",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
-        },
-      }}
-    >
-      <CardContent
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "180px",
-          bgcolor: "grey.50",
-          borderBottom: "1px solid",
-          borderColor: "grey.200",
-        }}
-      >
-        <PlayCircleOutlineIcon sx={{ fontSize: 60, color: "primary.main" }} />
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          Recording Available
-        </Typography>
-      </CardContent>
-      <CardContent sx={{ flexGrow: 1, pt: 2, px: 2.5 }}>
-        <Typography
-          gutterBottom
-          variant="h6"
-          component="h2"
-          sx={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            height: "3em",
-            fontWeight: 500,
-            color: "#333",
-          }}
-        >
-          {presentation.title}
-        </Typography>
-
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1.5 }}>
-          <Rating
-            value={presentation.score / 20}
-            precision={0.5}
-            readOnly
-            size="small"
-            sx={{ color: "primary.main" }}
-          />
-          <Typography variant="body2" color="text.secondary">
-            ({presentation.score}/100)
-          </Typography>
-        </Stack>
-
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-          {formatDate(presentation.createdAt)}
-        </Typography>
-
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1.5 }}>
-          {presentation.tags.map((tag) => (
-            <Chip
-              key={tag.id}
-              label={tag.name}
-              size="small"
-              sx={{
-                mr: 0.5,
-                mb: 0.5,
-                bgcolor: "rgba(0,0,0,0.05)",
-                color: "text.secondary",
-                borderRadius: 1,
-              }}
-            />
-          ))}
-        </Box>
-
-        <FormControlLabel
-          control={
-            <Switch
-              checked={presentation.isPublic}
-              onChange={() => onTogglePublic(presentation.id)}
-              color="primary"
-              size="small"
-            />
-          }
-          label={
-            <Typography variant="body2" color="text.secondary">
-              {presentation.isPublic ? "Public" : "Private"}
-            </Typography>
-          }
+    <PresentationCard
+      presentation={presentation}
+      formatDate={formatDate}
+      visibility={
+        <Visibility
+          isPublic={presentation.isPublic}
+          id={presentation.id}
+          onTogglePublic={onTogglePublic}
         />
-      </CardContent>
-      <CardActions sx={{ justifyContent: "space-between", px: 2, pb: 1.5 }}>
-        <Button
-          startIcon={<VisibilityIcon />}
-          size="small"
-          onClick={handleViewDetails}
-          sx={{ color: "primary.main" }}
-        >
-          View Details
-        </Button>
-        <Tooltip title="Delete presentation">
-          <IconButton
-            size="small"
-            onClick={() => onDeleteClick(presentation.id)}
-            sx={{ color: "error.main" }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </CardActions>
-    </Card>
+      }
+      deleteButton={
+        <DeleteButton onDeleteClick={onDeleteClick} id={presentation.id} />
+      }
+    />
   );
 };
 

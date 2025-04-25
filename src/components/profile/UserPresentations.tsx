@@ -5,13 +5,14 @@ import {
   fetchMyPresentations,
   deletePresentation,
   clearError,
+  
 } from "@/store/slices/myPresentations";
 import {
   Typography,
   Box,
   Grid,
   Pagination,
-  Divider,
+ 
   Dialog,
   DialogTitle,
   DialogContent,
@@ -19,37 +20,95 @@ import {
   DialogActions,
   Button,
   CircularProgress,
-  SelectChangeEvent,
-  Alert,
-  Snackbar,
+ 
 } from "@mui/material";
 
 import UserPresentationCard from "./UserPresentationCard";
-import PresentationFilters from "../presentations/PresentationFilters";
 import { PresentationType } from "@/types/presentation";
+import { useSnackbar } from "@/hooks/useSnackbar";
+import { clear } from "console";
 
-const DEFAULT_PRESENTATION: PresentationType = {
-  id: 0,
-  title: "No Title",
-  fileUrl: "/placeholder.svg",
-  clarity: 0,
-  clarityFeedback: "",
-  fluency: 0,
-  fluencyFeedback: "",
-  confidence: 0,
-  confidenceFeedback: "",
-  engagement: 0,
-  engagementFeedback: "",
-  speechStyle: 0,
-  speechStyleFeedback: "",
-  score: 0,
-  tips: "",
-  tags: [],
-  isPublic: false,
-  createdAt: new Date().toISOString(),
-  duration: 0,
-  user: undefined
-};
+const Title = () => (
+  <Typography
+    variant="h4"
+    component="h2"
+    color="primary"
+    gutterBottom
+    sx={{ fontWeight: "bold", mb: 4 }}
+  >
+    My Presentations
+  </Typography>
+);
+
+const Presentations = ({
+  currentItems,
+  formatDate,
+  length,
+  handleDeleteClick,
+  handleTogglePublic,
+}) => (
+  <Box sx={{ mb: 4 }}>
+    {length === 0 ? (
+      <Typography
+        variant="h6"
+        align="center"
+        sx={{ my: 8, color: "text.secondary" }}
+      >
+        No presentations found.
+      </Typography>
+    ) : (
+      <Grid container spacing={3}>
+        {currentItems.map((presentation) => (
+          <Grid item key={presentation.id} xs={12} sm={6}>
+            <UserPresentationCard
+              presentation={presentation}
+              formatDate={formatDate}
+              onDeleteClick={handleDeleteClick}
+              onTogglePublic={handleTogglePublic}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    )}
+  </Box>
+);
+
+const ConfirmDialog = ({
+  deleteDialogOpen,
+  handleCancelDelete,
+  handleConfirmDelete,
+}) => (
+  <Dialog open={deleteDialogOpen} onClose={handleCancelDelete}>
+    <DialogTitle>Delete Presentation</DialogTitle>
+    <DialogContent>
+      <DialogContentText>
+        Are you sure you want to delete this presentation? This action cannot be
+        undone.
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={handleCancelDelete} color="primary">
+        Cancel
+      </Button>
+      <Button onClick={handleConfirmDelete} color="error" variant="contained">
+        Delete
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+const PagingationControl = ({ length, page, handlePageChange, itemsPerPage }) =>
+  length > itemsPerPage && (
+    <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+      <Pagination
+        count={Math.ceil(length / itemsPerPage)}
+        page={page}
+        onChange={handlePageChange}
+        color="primary"
+        size="large"
+      />
+    </Box>
+  );
 
 const UserPresentations = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -58,87 +117,25 @@ const UserPresentations = () => {
     loading = false,
     error = null,
   } = useSelector((state: StoreType) => state.myPresentations);
-  const [filteredPresentations, setFilteredPresentations] = useState<
-    PresentationType[]
-  >([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("recent");
-  const [tagFilter, setTagFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [presentationToDelete, setPresentationToDelete] = useState<
     number | null
   >(null);
-  const itemsPerPage = 6;
 
-  const allTags = Array.from(
-    new Set(presentations.flatMap((p) => p.tags.map((t) => t.name)))
-  );
+  const { showSnackbar } = useSnackbar();
+
+  const itemsPerPage = 4;
 
   useEffect(() => {
     dispatch(fetchMyPresentations());
   }, [dispatch]);
-
   useEffect(() => {
-    let result = [...presentations];
-
-    // Apply search filter
-    if (searchTerm) {
-      result = result.filter(
-        (p) =>
-          p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.tags.some((tag) =>
-            tag.name.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-      );
+    if (error) {
+      showSnackbar(error, "error");
+      dispatch(clearError());
     }
-
-    // Apply tag filter
-    if (tagFilter !== "all") {
-      result = result.filter((p) =>
-        p.tags.some((tag) => tag.name === tagFilter)
-      );
-    }
-
-    // Apply sorting
-    switch (sortBy) {
-      case "recent":
-        result.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "oldest":
-        result.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        break;
-      case "highest":
-        result.sort((a, b) => b.score - a.score);
-        break;
-      case "lowest":
-        result.sort((a, b) => a.score - b.score);
-        break;
-      default:
-        break;
-    }
-
-    setFilteredPresentations(result);
-    setPage(1); // Reset to first page when filters change
-  }, [searchTerm, sortBy, tagFilter, presentations]);
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleSortChange = (event: SelectChangeEvent<string>) => {
-    setSortBy(event.target.value);
-  };
-
-  const handleTagFilterChange = (event: SelectChangeEvent<string>) => {
-    setTagFilter(event.target.value);
-  };
+  }, [error, dispatch, showSnackbar]);
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -155,6 +152,11 @@ const UserPresentations = () => {
   const handleConfirmDelete = async () => {
     if (presentationToDelete !== null) {
       await dispatch(deletePresentation(presentationToDelete));
+      if (deletePresentation.fulfilled.match(presentationToDelete)) {
+        showSnackbar("המצגת נמחקה בהצלחה", "success");
+      } else {
+        showSnackbar("אירעה שגיאה בעת ניסיון המחיקה", "error");
+      }
     }
     setDeleteDialogOpen(false);
     setPresentationToDelete(null);
@@ -170,17 +172,10 @@ const UserPresentations = () => {
     console.log("Toggle public for presentation:", id);
   };
 
-  const handleCloseError = () => {
-    dispatch(clearError());
-  };
-
   // Get current page items
   const indexOfLastItem = page * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredPresentations.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentItems = presentations.slice(indexOfFirstItem, indexOfLastItem);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -202,109 +197,28 @@ const UserPresentations = () => {
 
   return (
     <Box>
-      <Typography
-        variant="h4"
-        component="h2"
-        color="primary"
-        gutterBottom
-        sx={{ fontWeight: "bold", mb: 4 }}
-      >
-        My Presentations
-      </Typography>
+      <Title />
 
-      <Box sx={{ mb: 4 }}>
-        <PresentationFilters
-          searchTerm={searchTerm}
-          sortBy={sortBy}
-          tagFilter={tagFilter}
-          allTags={allTags}
-          handleSearchChange={handleSearchChange}
-          handleSortChange={handleSortChange}
-          handleTagFilterChange={handleTagFilterChange}
-        />
-      </Box>
+      <Presentations
+        currentItems={currentItems}
+        formatDate={formatDate}
+        length={presentations.length}
+        handleDeleteClick={handleDeleteClick}
+        handleTogglePublic={handleTogglePublic}
+      />
 
-      <Divider sx={{ mb: 4 }} />
+      <PagingationControl
+        length={presentations.length}
+        page={page}
+        handlePageChange={handlePageChange}
+        itemsPerPage={itemsPerPage}
+      />
 
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-          {filteredPresentations.length} presentations found
-        </Typography>
-
-        {filteredPresentations.length === 0 ? (
-          <Typography
-            variant="h6"
-            align="center"
-            sx={{ my: 8, color: "text.secondary" }}
-          >
-            No presentations found with the current filters.
-          </Typography>
-        ) : (
-          <Grid container spacing={3}>
-            {currentItems.map((presentation) => (
-              <Grid item key={presentation.id} xs={12} sm={6}>
-                <UserPresentationCard
-                  presentation={presentation}
-                  formatDate={formatDate}
-                  onDeleteClick={handleDeleteClick}
-                  onTogglePublic={handleTogglePublic}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </Box>
-
-      {filteredPresentations.length > itemsPerPage && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-          <Pagination
-            count={Math.ceil(filteredPresentations.length / itemsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-            size="large"
-          />
-        </Box>
-      )}
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={handleCancelDelete}>
-        <DialogTitle>Delete Presentation</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this presentation? This action
-            cannot be undone.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            color="error"
-            variant="contained"
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Error Snackbar */}
-      <Snackbar
-        open={!!error}
-        autoHideDuration={6000}
-        onClose={handleCloseError}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert
-          onClose={handleCloseError}
-          severity="error"
-          sx={{ width: "100%" }}
-        >
-          {error}
-        </Alert>
-      </Snackbar>
+      <ConfirmDialog
+        deleteDialogOpen={deleteDialogOpen}
+        handleCancelDelete={handleCancelDelete}
+        handleConfirmDelete={handleConfirmDelete}
+      />
     </Box>
   );
 };
