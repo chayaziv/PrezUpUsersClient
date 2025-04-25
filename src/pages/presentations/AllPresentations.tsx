@@ -134,15 +134,7 @@ const AllPresentations = () => {
 
   return (
     <Container maxWidth="lg">
-      <Typography
-        variant="h3"
-        component="h1"
-        color="primary"
-        gutterBottom
-        sx={{ fontWeight: "bold", mb: 4 }}
-      >
-        All Presentations
-      </Typography>
+      <Header />
 
       <Box sx={{ mb: 4 }}>
         <PresentationFilters
@@ -159,45 +151,75 @@ const AllPresentations = () => {
       <Divider sx={{ mb: 4 }} />
 
       <Box sx={{ mb: 4 }}>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-          {filteredPresentations.length} presentations found
-        </Typography>
+        <CountFound count={filteredPresentations.length} />
 
         {filteredPresentations.length === 0 ? (
-          <Typography
-            variant="h6"
-            align="center"
-            sx={{ my: 8, color: "text.secondary" }}
-          >
-            No presentations found with the current filters.
-          </Typography>
+          <NotFoundMessage />
         ) : (
-          <Grid container spacing={3}>
-            {currentItems.map((presentation) => (
-              <Grid item key={presentation.id} xs={12} sm={6} md={4}>
-                <PresentationCard
-                  presentation={presentation}
-                  formatDate={formatDate}
-                />
-              </Grid>
-            ))}
-          </Grid>
+          <Presentations currentItems={currentItems} formatDate={formatDate} />
         )}
       </Box>
 
       {filteredPresentations.length > itemsPerPage && (
-        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-          <Pagination
-            count={Math.ceil(filteredPresentations.length / itemsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-            size="large"
-          />
-        </Box>
+        <PaginationControl
+          count={filteredPresentations.length}
+          page={page}
+          onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+        />
       )}
     </Container>
   );
 };
 
 export default AllPresentations;
+
+const Header = () => (
+  <Typography
+    variant="h3"
+    component="h1"
+    color="primary"
+    gutterBottom
+    sx={{ fontWeight: "bold", mb: 4 }}
+  >
+    All Presentations
+  </Typography>
+);
+
+const CountFound = ({ count }) => (
+  <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+    {count} presentations found
+  </Typography>
+);
+
+const NotFoundMessage = () => (
+  <Typography
+    variant="h6"
+    align="center"
+    sx={{ my: 8, color: "text.secondary" }}
+  >
+    No presentations found with the current filters.
+  </Typography>
+);
+
+const Presentations = ({ currentItems, formatDate }) => (
+  <Grid container spacing={3}>
+    {currentItems.map((presentation) => (
+      <Grid item key={presentation.id} xs={12} sm={6} md={4}>
+        <PresentationCard presentation={presentation} formatDate={formatDate} />
+      </Grid>
+    ))}
+  </Grid>
+);
+
+const PaginationControl = ({ count, page, onPageChange, itemsPerPage }) => (
+  <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+    <Pagination
+      count={Math.ceil(count / itemsPerPage)}
+      page={page}
+      onChange={onPageChange}
+      color="primary"
+      size="large"
+    />
+  </Box>
+);

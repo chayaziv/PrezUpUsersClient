@@ -10,28 +10,21 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import exp from "constants";
 import { motion } from "framer-motion";
+import {
+  overallScoreContainerStyles,
+  overallScoreCircleStyles,
+  metricCardStyles,
+  metricProgressStyles,
+  metricsContainerStyles,
+} from "@/styles/metricsStyle";
 
 const OverallScore = ({ score }) => (
-  <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
+  <Box sx={overallScoreContainerStyles}>
     <Typography variant="h5" fontWeight="bold">
       Overall Score
     </Typography>
-    <Box
-      sx={{
-        ml: "auto",
-        width: 80,
-        height: 80,
-        borderRadius: "50%",
-        border: `8px solid ${getProgressColor(score)}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.paper",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-      }}
-    >
+    <Box sx={overallScoreCircleStyles(getProgressColor(score))}>
       <Typography
         variant="h4"
         fontWeight="bold"
@@ -72,23 +65,13 @@ const PerformanceMetrics = ({ presentation }) => (
         feedback: presentation.speechStyleFeedback,
       },
     ].map((metric) => (
-      <Card
-        key={metric.label}
-        variant="outlined"
-        sx={{ borderRadius: 3, boxShadow: "none" }}
-      >
+      <Card key={metric.label} variant="outlined" sx={metricCardStyles}>
         <CardContent>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Typography variant="subtitle1" fontWeight="medium">
               {metric.label}
             </Typography>
-            <Box
-              sx={{
-                ml: "auto",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
+            <Box sx={{ ml: "auto", display: "flex", alignItems: "center" }}>
               <Typography
                 variant="body2"
                 fontWeight="bold"
@@ -105,16 +88,7 @@ const PerformanceMetrics = ({ presentation }) => (
           <LinearProgress
             variant="determinate"
             value={metric.value * 10}
-            sx={{
-              height: 8,
-              borderRadius: 4,
-              mb: 2,
-              bgcolor: "rgba(0,0,0,0.04)",
-              "& .MuiLinearProgress-bar": {
-                bgcolor: getProgressColor(metric.value),
-                borderRadius: 4,
-              },
-            }}
+            sx={metricProgressStyles(getProgressColor(metric.value))}
           />
 
           <Typography variant="body2" color="text.secondary">
@@ -125,6 +99,7 @@ const PerformanceMetrics = ({ presentation }) => (
     ))}
   </Stack>
 );
+
 const MetricsContainer = ({ children }) => (
   <Grid item xs={12} md={5}>
     <motion.div
@@ -132,20 +107,13 @@ const MetricsContainer = ({ children }) => (
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 }}
     >
-      <Paper
-        elevation={1}
-        sx={{
-          p: 3,
-          mb: 4,
-          borderRadius: 4,
-          background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
-        }}
-      >
+      <Paper elevation={1} sx={metricsContainerStyles}>
         {children}
       </Paper>
     </motion.div>
   </Grid>
 );
+
 const Metrics = ({ presentation }) => {
   return (
     <MetricsContainer>

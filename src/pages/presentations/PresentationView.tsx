@@ -74,7 +74,6 @@ const PresentationView = () => {
     (state: RootState) => state.publicPresentations
   );
 
-  // State
   const [presentation, setPresentation] = useState<PresentationType | null>(
     null
   );
@@ -95,44 +94,6 @@ const PresentationView = () => {
   const handleEnded = () => {
     setIsPlaying(false);
     setCurrentTime(0);
-  };
-
-  const togglePlayPause = () => {
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
-  const seekTo = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!audioRef.current || !presentation?.duration) return;
-    const seekPosition = e.nativeEvent.offsetX / e.currentTarget.clientWidth;
-    const newTime = seekPosition * presentation.duration;
-    audioRef.current.currentTime = newTime;
-    setCurrentTime(newTime);
-  };
-
-  const toggleMute = () => {
-    if (!audioRef.current) return;
-    audioRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-  };
-
-  const handleVolumeChange = (e: Event, newValue: number | number[]) => {
-    if (!audioRef.current) return;
-    const newVolume = (newValue as number) / 100;
-    setVolume(newVolume);
-    audioRef.current.volume = newVolume;
-    if (newVolume === 0) {
-      setIsMuted(true);
-      audioRef.current.muted = true;
-    } else if (isMuted) {
-      setIsMuted(false);
-      audioRef.current.muted = false;
-    }
   };
 
   useEffect(() => {
